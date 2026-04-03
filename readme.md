@@ -1,4 +1,4 @@
-# 🌿 KisanAI — AI-Powered Smart Farming Assistant
+# 🌿 KRISHI-AI — AI-Powered Smart Farming Assistant
 
 > *Detect · Predict · Protect · Profit*
 
@@ -10,7 +10,7 @@
 
 ## 📌 Overview
 
-KisanAI is an AI-powered smart farming assistant designed for India's 146 million farming families. It puts expert-level crop disease detection, market intelligence, and farming advice directly into a farmer's pocket — in Hindi, offline, on any smartphone.
+KRISHI-AI is an AI-powered smart farming assistant designed for India's 146 million farming families. It puts expert-level crop disease detection, market intelligence, and farming advice directly into a farmer's pocket — in Hindi, offline, on any smartphone.
 
 > *"Agar kisan samarth hai, toh Bharat samarth hai."*
 > — If the farmer is empowered, India is empowered.
@@ -35,7 +35,7 @@ Indian farmers lose **35% of their crops preventably** every season due to:
 
 ## ✅ Solution
 
-**KisanAI — One app, all farming needs.**
+**KRISHI-AI — One app, all farming needs.**
 
 | Feature | Description |
 |---|---|
@@ -160,8 +160,8 @@ Action (Treat · Sell · Grow)
 
 ```bash
 # Clone the repository
-git clone https://github.com/syntax-squad/kisanai.git
-cd kisanai
+git clone https://github.com/syntax-squad/krishi-ai.git
+cd krishi-ai
 
 # Install dependencies
 npm install
@@ -198,7 +198,7 @@ vercel --prod
 ## 📁 Project Structure
 
 ```
-kisanai/
+krishi-ai/
 ├── public/             # Static assets, PWA manifest
 ├── src/
 │   ├── components/     # React UI components
@@ -245,6 +245,6 @@ This project was built for the Technocrats Innovation Challenge 2K26. All rights
 ---
 
 <div align="center">
-  <strong>🌿 KisanAI — Empowering India's farmers with the power of AI</strong><br>
+  <strong>🌿 KRISHI-AI — Empowering India's farmers with the power of AI</strong><br>
   <em>In their language · On their phone · For Bharat</em>
 </div>
