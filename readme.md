@@ -1,4 +1,4 @@
-# Technocrats-Innovation-Challenge-2k26 Hackhathon Project
+# Technocrats-Innovation-Challenge-2k26 Hackathon Project
 
 
 # 🌿 KRISHI-AI — AI-Powered Smart Farming Assistant
