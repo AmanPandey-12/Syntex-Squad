@@ -151,7 +151,7 @@ export default function LandingPage() {
               )}
             </AnimatePresence>
           </div>
-          <Link to="/dashboard" className="btn-g" style={{ padding: '8px 18px', fontSize: 13 }}>
+          <Link to="/login" className="btn-g" style={{ padding: '8px 18px', fontSize: 13 }}>
             {t.launch} <ArrowUpRight size={13} />
           </Link>
         </div>
@@ -199,7 +199,7 @@ export default function LandingPage() {
           </motion.p>
 
           <motion.div variants={fadeUp} style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 60 }}>
-            <Link to="/dashboard" className="btn-g">{t.launch} <ArrowRight size={15} /></Link>
+            <Link to="/login" className="btn-g">{t.launch} <ArrowRight size={15} /></Link>
             <a href="#features" className="btn-o">{t.seeFeatures} <ChevronDown size={14} /></a>
           </motion.div>
 
@@ -313,7 +313,7 @@ export default function LandingPage() {
                   <span className="mono" style={{ fontSize: 9.5, padding: '5px 12px', background: `${FEATURES[activeFeature].color}08`, color: FEATURES[activeFeature].color, borderRadius: 100, border: `1px solid ${FEATURES[activeFeature].color}18`, letterSpacing: '0.05em' }}>
                     {FEATURES[activeFeature].tag}
                   </span>
-                  <Link to="/dashboard" className="btn-o" style={{ padding: '6px 16px', fontSize: 12.5, borderRadius: 100 }}>Try it <ArrowRight size={12} /></Link>
+                  <Link to="/login" className="btn-o" style={{ padding: '6px 16px', fontSize: 12.5, borderRadius: 100 }}>Try it <ArrowRight size={12} /></Link>
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -331,8 +331,8 @@ export default function LandingPage() {
 
           <div className="grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 18 }}>
             {[
-              { n: '01', icon: <User size={22} />, color: '#4ade80', title: 'Connect instantly', desc: 'No complex signup. Your personalized farmer dashboard is ready in seconds, in your language.', checks: ['Works on any device', 'Available in 6 languages', 'Instant access'] },
-              { n: '02', icon: <Scan size={22} />, color: '#60a5fa', title: 'Diagnose your crops', desc: 'Identify 38+ diseases in under 3 seconds with a complete treatment plan.', checks: ['Results in under 3 seconds', 'Identifies 38+ diseases', 'Expert recommendations'] },
+              { n: '01', icon: <User size={22} />, color: '#4ade80', title: 'Create your account', desc: 'Sign up instantly — no credit card required. Your personalized farmer dashboard is ready in seconds, in your language.', checks: ['Works on any device', 'Available in 6 languages', 'No credit card required'] },
+              { n: '02', icon: <Scan size={22} />, color: '#60a5fa', title: 'Scan your crops', desc: 'Upload a leaf photo. TensorFlow AI identifies 38+ diseases in under 3 seconds with a complete treatment plan.', checks: ['Results in under 3 seconds', 'Identifies 38+ diseases', 'Report saved to inventory'] },
               { n: '03', icon: <BarChart3 size={22} />, color: '#fbbf24', title: 'Monitor & decide', desc: "Track crop health, check live Mandi prices, and chat with the AI Copilot — all from one beautiful dashboard.", checks: ['Live Mandi price tracking', 'Hyper-local weather data', 'AI Copilot on demand'] },
             ].map((s, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>
@@ -357,6 +357,39 @@ export default function LandingPage() {
                       </div>
                     ))}
                   </div>
+                </motion.div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ INVENTORY ═══════ */}
+      <section id="inventory" style={{ padding: '110px 28px', background: '#040608', position: 'relative' }}>
+        <div className="grid-bg" style={{ position: 'absolute', inset: 0, opacity: 0.7 }} />
+        <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} style={{ marginBottom: 64 }}>
+            <span className="eyebrow">◆ Profile & Inventory</span>
+            <h2 className="sh">Every scan.<br /><span style={{ color: '#4ade80' }}>Every report.</span></h2>
+          </motion.div>
+
+          <div className="grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14 }}>
+            {[
+              { icon: <Package size={17} />, color: '#fbbf24', title: 'Crop Inventory', desc: 'All scanned crops with health reports, disease history, and treatment records — searchable and organized.' },
+              { icon: <FileText size={17} />, color: '#4ade80', title: 'PDF Reports', desc: 'Official disease reports stamped with KrishiAI — shareable with agricultural officers.' },
+              { icon: <User size={17} />, color: '#c084fc', title: 'Farmer Profile', desc: 'Update your village, location, crops, and instruments. Connect with your local community.' },
+              { icon: <Calendar size={17} />, color: '#60a5fa', title: 'Crop Calendar', desc: 'Plan planting and harvest schedules. Get alerts so you never miss a critical farming window.' },
+              { icon: <ShoppingCart size={17} />, color: '#fb923c', title: 'Live Mandi Prices', desc: 'Search live commodity rates across local Mandi markets, updated in real-time.' },
+              { icon: <Shield size={17} />, color: '#f87171', title: 'Disease Alerts', desc: 'Automatic alerts when any tracked crop shows early disease signs — stay ahead always.' },
+            ].map((c, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.07 }}>
+                <motion.div className="glass" style={{ padding: '26px', height: '100%' }}
+                  whileHover={{ y: -5, borderColor: `${c.color}22` }} transition={{ type: 'spring', stiffness: 400, damping: 30 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 11, background: `${c.color}0d`, border: `1px solid ${c.color}16`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: c.color, marginBottom: 16 }}>
+                    {c.icon}
+                  </div>
+                  <div style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.03em', color: '#f0f4f1', marginBottom: 9 }}>{c.title}</div>
+                  <p className="cab" style={{ fontSize: 13, color: 'rgba(240,244,241,0.36)', lineHeight: 1.68 }}>{c.desc}</p>
                 </motion.div>
               </motion.div>
             ))}
@@ -389,13 +422,13 @@ export default function LandingPage() {
               ))}
             </div>
 
-            <Link to="/dashboard" className="btn-g" style={{ fontSize: 15, padding: '15px 34px' }}>
+            <Link to="/login" className="btn-g" style={{ fontSize: 15, padding: '15px 34px' }}>
               {t.ctaBtn} <ArrowRight size={16} />
             </Link>
 
             <div className="cab" style={{ marginTop: 28, fontSize: 12, color: 'rgba(240,244,241,0.22)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
               <Star size={11} color="rgba(251,191,36,0.45)" />
-              Trusted by farmers across India
+              Trusted by farmers across India · No credit card required
             </div>
           </motion.div>
         </div>
@@ -404,7 +437,7 @@ export default function LandingPage() {
       {/* ═══════ FOOTER ═══════ */}
       <footer style={{ background: '#040608', borderTop: '1px solid rgba(255,255,255,0.04)', padding: '60px 28px 30px' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-          <div className="grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 44, marginBottom: 52 }}>
+          <div className="grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 44, marginBottom: 52 }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
                 <div style={{ width: 32, height: 32, background: 'linear-gradient(135deg,#4ade80,#16a34a)', borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -416,7 +449,7 @@ export default function LandingPage() {
               </div>
               <p className="cab" style={{ fontSize: 13, color: 'rgba(240,244,241,0.28)', lineHeight: 1.72, marginBottom: 22 }}>{t.footerDesc}</p>
               <div style={{ display: 'flex', gap: 7 }}>
-                {[{ icon: <Mail size={13} />, h: 'mailto:support@krishiai.online' }].map((s, i) => (
+                {[{ icon: <Github size={13} />, h: 'https://github.com' }, { icon: <Linkedin size={13} />, h: 'https://linkedin.com' }, { icon: <Globe size={13} />, h: '/' }, { icon: <Mail size={13} />, h: 'mailto:support@krishiai.online' }].map((s, i) => (
                   <a key={i} href={s.h} target={s.h.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer"
                     style={{ width: 32, height: 32, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(240,244,241,0.28)', textDecoration: 'none', transition: 'all 0.15s' }}>
                     {s.icon}
@@ -426,8 +459,22 @@ export default function LandingPage() {
             </div>
             <div>
               <div className="mono" style={{ fontSize: 9, letterSpacing: '0.18em', color: 'rgba(240,244,241,0.22)', textTransform: 'uppercase', marginBottom: 18 }}>{t.quickLinks}</div>
-              {[['/', 'Home'], ['/dashboard', 'Dashboard']].map(([to, l]) => (
+              {[['/', 'Home'], ['/dashboard', 'Dashboard'], ['/detection', 'Disease Detection'], ['/inventory', 'Crop Inventory'], ['/weather', 'Weather']].map(([to, l]) => (
                 <Link key={to} to={to} className="footer-a">{l}</Link>
+              ))}
+            </div>
+            <div>
+              <div className="mono" style={{ fontSize: 9, letterSpacing: '0.18em', color: 'rgba(240,244,241,0.22)', textTransform: 'uppercase', marginBottom: 18 }}>{t.company}</div>
+              {[['/about', 'About'], ['/team', 'Team'], ['/contact', 'Contact'], ['/privacy', 'Privacy Policy'], ['/terms', 'Terms of Service']].map(([to, l]) => (
+                <Link key={to} to={to} className="footer-a">{l}</Link>
+              ))}
+            </div>
+            <div>
+              <div className="mono" style={{ fontSize: 9, letterSpacing: '0.18em', color: 'rgba(240,244,241,0.22)', textTransform: 'uppercase', marginBottom: 18 }}>{t.contact}</div>
+              {[{ icon: <Mail size={12} />, t: 'support@krishiai.online' }, { icon: <MapPin size={12} />, t: 'Bhopal, Madhya Pradesh' }, { icon: <Phone size={12} />, t: '+91 98765 43210' }].map((c, i) => (
+                <div key={i} className="cab" style={{ display: 'flex', alignItems: 'flex-start', gap: 9, fontSize: 13, color: 'rgba(240,244,241,0.28)', marginBottom: 11 }}>
+                  <span style={{ color: 'rgba(74,222,128,0.38)', marginTop: 2 }}>{c.icon}</span>{c.t}
+                </div>
               ))}
             </div>
           </div>
@@ -436,7 +483,7 @@ export default function LandingPage() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
             <span className="mono" style={{ fontSize: 10, color: 'rgba(240,244,241,0.18)' }}>© 2026 KrishiAI. {t.allRights}.</span>
             <span className="cab" style={{ fontSize: 11.5, color: 'rgba(240,244,241,0.18)', display: 'flex', alignItems: 'center', gap: 5 }}>
-              <Heart size={10} color="rgba(248,113,113,0.4)" /> {t.madeWith}
+              <Heart size={10} color="rgba(248,113,113,0.4)" /> {t.madeWith} · Built by Jitendra & Jatin
             </span>
           </div>
         </div>
