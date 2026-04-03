@@ -488,7 +488,28 @@ const Navbar = ({ dark = false }) => {
           </motion.nav>
         )}
       </AnimatePresence>
-
+ 1px solid ${dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0,0,0,0.05)'};
+        }
+        .nb-drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .nb-drawer-close {
+          width: 44px; height: 44px; border-radius: 14px;
+          background: ${dark ? 'rgba(255, 255, 255, 0.05)' : '#f8fafc'}; 
+          border: 1px solid ${dark ? 'rgba(255, 255, 255, 0.1)' : '#e2e8f0'};
+          display: flex; align-items: center; justify-content: center; 
+          color: ${dark ? 'rgba(255, 255, 255, 0.7)' : '#64748b'};
+          cursor: pointer; transition: all 0.2s;
+        }
+        .nb-drawer-close:hover { 
+          background: ${dark ? 'rgba(255, 255, 255, 0.1)' : '#f1f5f9'}; 
+          color: ${dark ? '#fff' : '#0f172a'}; 
+          transform: rotate(90deg); 
+        }
+        .nb-drawer-foot { 
+          margin-top: auto; display: flex; flex-direction: column; gap: 10px; 
+          padding-top: 24px; 
+          border-top: 1px solid ${dark ? 'rgba(255, 255, 255, 0.1)' : '#f1f5f9'}; 
+        }
+      `}</style>
       {/* Mobile Drawer */}
       <AnimatePresence>
         {open && (
@@ -509,7 +530,7 @@ const Navbar = ({ dark = false }) => {
             transition={{ type: 'spring', damping: 28, stiffness: 220 }}
           >
             <div className="nb-drawer-head">
-            <div className="navbar-brand">
+              <div className="navbar-brand">
                 <div className="brand-icon" style={{ width: 44, height: 44, borderRadius: 14 }}><img src="/logo.png" className="brand-logo-img" alt="logo" /></div>
                 <span className="brand-name" style={{ fontSize: 22 }}>Krishi<span>AI</span></span>
               </div>
