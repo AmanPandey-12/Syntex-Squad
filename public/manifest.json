@@ -1,0 +1,44 @@
+{
+  "name": "KrishiAI - Smart Farming Assistant",
+  "short_name": "KrishiAI",
+  "description": "AI-powered farming assistant for Indian farmers — disease detection, mandi prices, weather alerts",
+  "theme_color": "#2e7d4f",
+  "background_color": "#f0f4ed",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/dashboard",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["agriculture", "productivity", "lifestyle"],
+  "lang": "hi-IN",
+  "shortcuts": [
+    {
+      "name": "Disease Scanner",
+      "short_name": "Scanner",
+      "description": "Fasal ki bimari detect karein",
+      "url": "/detection",
+      "icons": [{ "src": "logo.png", "sizes": "any" }]
+    },
+    {
+      "name": "Mandi Prices",
+      "short_name": "Mandi",
+      "description": "Live mandi bhav dekhein",
+      "url": "/dashboard",
+      "icons": [{ "src": "logo.png", "sizes": "any" }]
+    },
+    {
+      "name": "Crop Picker",
+      "short_name": "Fasal",
+      "description": "Best fasal chunein",
+      "url": "/crop-picker",
+      "icons": [{ "src": "logo.png", "sizes": "any" }]
+    }
+  ]
+}
