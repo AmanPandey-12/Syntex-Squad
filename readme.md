@@ -6,7 +6,7 @@
 > *Detect · Predict · Protect · Profit*
 
 **TIC_2K26 · AGRI_01 | Agriculture Theme · Technocrats Innovation Challenge 2K26**
-**Team Syntax Squad** — Jatin | Aman | Jeetu | Mukesh | Devendra
+**Team Syntex Squad** — Jatin | Aman | Jeetu | Mukesh | Devendra
 *Technocrats Institute of Technology, Bhopal, MP*
 
 ---
@@ -202,6 +202,69 @@ vercel --prod
 
 ```
 krishi-ai/
+├── public/                 # Static assets
+│   ├── img/
+│   │   └── hero-sequence/  # Hero section animation frames
+│   ├── favicon.svg
+│   ├── logo.png
+│   └── manifest.json
+├── src/                    # Source code
+│   ├── components/         # Reusable UI components
+│   │   ├── AppFooter.jsx
+│   │   ├── Effects3D.jsx
+│   │   ├── FarmerCommunity.jsx
+│   │   ├── FloatingMic.jsx
+│   │   ├── LandingFooter.jsx
+│   │   ├── MicButton.jsx
+│   │   ├── Navbar.jsx
+│   │   └── ScrollToTop.jsx
+│   ├── context/            # Globally available states
+│   │   └── LanguageContext.jsx
+│   ├── data/               # Static data and config arrays
+│   │   └── cropCalendar.js
+│   ├── hooks/              # Custom React hooks
+│   │   └── useVoiceSearch.js
+│   ├── pages/              # Primary route views
+│   │   ├── AboutPage.jsx
+│   │   ├── ContactPage.jsx
+│   │   ├── CropPickerPage.jsx
+│   │   ├── Dashboard.jsx
+│   │   ├── DetectionPage.jsx
+│   │   ├── InventoryPage.jsx
+│   │   ├── LandingPage.jsx
+│   │   ├── LoginPage.jsx
+│   │   ├── NotFoundPage.jsx
+│   │   ├── PrivacyPolicyPage.jsx
+│   │   ├── ProfilePage.jsx
+│   │   ├── ProfitCalculatorPage.jsx
+│   │   ├── TeamPage.jsx
+│   │   └── TermsPage.jsx
+│   ├── services/           # Backend communication & Mock APIs
+│   │   └── api.js
+│   ├── three/              # 3D Scene configurations (React-Three-Fiber)
+│   │   └── PlantScene.jsx
+│   ├── utils/              # Helper utilities
+│   │   └── imageUtils.js
+│   ├── App.jsx             # Main router and provider wrapper
+│   ├── firebase.js         # Firebase configuration and initialization
+│   ├── index.css           # Global styles and Tailwind imports
+│   └── main.jsx            # Application entry point
+├── .env                    # Secret environment variables (API Keys)
+├── .env.example            # Environment template for developers
+├── .gitignore
+├── firestore.rules         # Security rules for Firestore
+├── index.html              # Core HTML structure
+├── jsconfig.json           # Path alias configuration
+├── LICENSE                 # License info
+├── package.json            # Scripts and dependencies
+├── postcss.config.js       # PostCSS plugins config
+├── README.md               # Home for project overview
+├── tailwind.config.js      # Design tokens and theme settings
+├── vercel.json             # Deployment settings for Vercel
+├── vite.config.js          # Build tool and server configuration
+├── AntiGravity_Presentation_Scripts.txt # Presentation materials
+├── KrishiAI_Features_For_Farmers.txt    # Product feature planning
+└── KrishiAI_User_Guide.txt              # User manual documentation
 ```
 
 ---
@@ -211,10 +274,10 @@ krishi-ai/
 | Name | Role |
 |---|---|
 | Aman Pandey | **Team Lead** |
-| Devendra Dongre 
-| Jetendra Yadav 
-| Jatin Dongre 
-| Mukesh Kumar Paswan 
+| Devendra Dongre | Member |
+| Jetendra Yadav | Member |
+| Jatin Dongre | Member |
+| Mukesh Kumar Paswan | Member |
 
 **Institution:** Technocrats Institute of Technology, Bhopal, MP
 
