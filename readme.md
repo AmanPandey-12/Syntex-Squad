@@ -1,3 +1,6 @@
+# Technocrats-Innovation-Challenge-2k26 Hackhathon Project
+
+
 # 🌿 KRISHI-AI — AI-Powered Smart Farming Assistant
 
 > *Detect · Predict · Protect · Profit*
@@ -199,19 +202,6 @@ vercel --prod
 
 ```
 krishi-ai/
-├── public/             # Static assets, PWA manifest
-├── src/
-│   ├── components/     # React UI components
-│   ├── pages/          # App screens (Disease, Crop, Market)
-│   ├── models/         # TensorFlow.js CNN model
-│   ├── services/       # API integrations (Weather, Market, Gemini)
-│   ├── i18n/           # Hindi/English translations
-│   └── utils/          # Helper functions
-├── backend/
-│   ├── routes/         # Express API routes
-│   ├── models/         # MongoDB schemas
-│   └── controllers/    # Business logic
-└── README.md
 ```
 
 ---
@@ -220,11 +210,11 @@ krishi-ai/
 
 | Name | Role |
 |---|---|
-| Jatin | Team Lead / AI/ML |
-| Aman | Frontend Development |
-| Jeetu | Backend Development |
-| Mukesh | UI/UX Design |
-| Devendra | Data & APIs |
+| Aman Pandey | **Team Lead** |
+| Devendra Dongre 
+| Jetendra Yadav 
+| Jatin Dongre 
+| Mukesh Kumar Paswan 
 
 **Institution:** Technocrats Institute of Technology, Bhopal, MP
 
