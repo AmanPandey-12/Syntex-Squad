@@ -230,7 +230,7 @@ krishi-ai/
 
 ## 📄 License
 
-This project was built for the Technocrats Innovation Challenge 2K26. All rights reserved by Team Syntax Squad.
+This project was built for the Technocrats Innovation Challenge 2K26. All rights reserved by Team Syntex Squad.
 
 ---
 
