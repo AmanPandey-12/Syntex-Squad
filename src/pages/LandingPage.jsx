@@ -3,7 +3,7 @@ import { useRef, useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import {
   motion, useScroll, useSpring, useTransform,
-  AnimatePresence, useMotionValue, useAnimation
+  AnimatePresence
 } from 'framer-motion';
 import {
   ArrowRight, Leaf, ChevronDown, Heart, Cloud, BarChart3,
@@ -196,64 +196,35 @@ const LANGS = {
    NATURE SCENE COMPONENTS
 ════════════════════════════════════════════ */
 
-// Global Space Background
+// Global Space Background — CSS-only for max performance
 const SpaceStars = () => {
-  const [stars] = useState(() => Array.from({ length: 200 }, (_, i) => ({
+  // Only 40 stars using CSS animation (not framer-motion per star)
+  const stars = Array.from({ length: 40 }, (_, i) => ({
     id: i,
-    left: Math.random() * 100,
-    size: Math.random() * 2 + 0.5,
-    duration: Math.random() * 50 + 20,
-    delay: Math.random() * -50,
-    opacity: Math.random() * 0.6 + 0.1
-  })));
-
-  // Shooting stars
-  const [shootingStars] = useState(() => Array.from({ length: 8 }, (_, i) => ({
-    id: `sh-${i}`,
-    top: Math.random() * 70,
-    duration: Math.random() * 3 + 1.5,
-    delay: Math.random() * 15 + i * 2,
-  })));
-
+    left: (i * 2.5 + Math.sin(i * 1.7) * 12 + 50) % 100,
+    top: (i * 11.3 + Math.cos(i * 2.1) * 15 + 50) % 100,
+    size: (i % 3) + 1,
+    delay: (i * 0.37) % 4,
+    duration: 3 + (i % 5),
+  }));
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" style={{ background: '#030508' }}>
-      {/* Deep space glow */}
       <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-900/10 blur-[150px] rounded-full" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-emerald-900/10 blur-[150px] rounded-full" />
-
-      {stars.map((star) => (
-        <motion.div
-          key={star.id}
-          className="absolute rounded-full bg-white"
+      {stars.map(star => (
+        <div key={star.id} className="absolute rounded-full bg-white"
           style={{
-            left: `${star.left}%`,
-            width: star.size,
-            height: star.size,
-            opacity: star.opacity,
-            boxShadow: `0 0 ${star.size * 2}px rgba(255,255,255,0.8)`
-          }}
-          initial={{ top: '100%' }}
-          animate={{ top: '-10%' }}
-          transition={{ duration: star.duration, delay: star.delay, repeat: Infinity, ease: 'linear' }}
-        />
+            left: `${star.left}%`, top: `${star.top}%`,
+            width: star.size, height: star.size,
+            opacity: 0.5,
+            boxShadow: `0 0 ${star.size * 2}px rgba(255,255,255,0.7)`,
+            animation: `star-twinkle ${star.duration}s ease-in-out ${star.delay}s infinite alternate`,
+          }} />
       ))}
-      {shootingStars.map((s) => (
-        <motion.div
-          key={s.id}
-          className="absolute h-[1px] bg-gradient-to-r from-transparent via-white to-transparent"
-          style={{
-            top: `${s.top}%`,
-            width: '150px',
-            opacity: 0,
-            transform: 'rotate(-45deg)'
-          }}
-          animate={{
-            left: ['100%', '-20%'],
-            opacity: [0, 1, 1, 0]
-          }}
-          transition={{ duration: s.duration, delay: s.delay, repeat: Infinity, ease: 'linear', repeatDelay: Math.random() * 10 + 5 }}
-        />
-      ))}
+      {/* 3 CSS shooting stars */}
+      <div className="shooting-star" style={{ top: '15%', animationDelay: '0s' }} />
+      <div className="shooting-star" style={{ top: '35%', animationDelay: '4s' }} />
+      <div className="shooting-star" style={{ top: '55%', animationDelay: '9s' }} />
     </div>
   );
 };
@@ -333,188 +304,80 @@ const HorizonGlow = ({ phase = 'dawn' }) => {
   );
 };
 
-// Advanced rain — smooth, layered, wind-driven
-const AdvancedRain = () => {
-  const layers = [
-    { count: 25, speed: 1.2, angle: -12, opacity: 0.35, width: 1, lenMin: 18, lenMax: 32 },
-    { count: 18, speed: 0.9, angle: -8, opacity: 0.2, width: 0.7, lenMin: 12, lenMax: 22 },
-    { count: 12, speed: 1.6, angle: -15, opacity: 0.15, width: 1.2, lenMin: 22, lenMax: 40 },
-  ];
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 4 }}>
-      <svg className="absolute inset-0 w-full h-full" style={{ mixBlendMode: 'screen' }}>
-        <defs>
-          <filter id="rain-blur">
-            <feGaussianBlur stdDeviation="0.3" />
-          </filter>
-        </defs>
-        {layers.map((layer, li) =>
-          Array.from({ length: layer.count }, (_, i) => {
-            const x = Math.random() * 110 - 5;
-            const delay = Math.random() * 2.5;
-            const len = layer.lenMin + Math.random() * (layer.lenMax - layer.lenMin);
-            const dur = layer.speed + Math.random() * 0.4;
-            const dx = Math.tan((layer.angle * Math.PI) / 180) * 100;
-            return (
-              <motion.line key={`${li}-${i}`}
-                x1={`${x}%`} y1="-2%"
-                x2={`${x + dx * 0.08}%`} y2={`${len * 0.7}%`}
-                stroke="#bae6fd"
-                strokeWidth={layer.width}
-                strokeOpacity={layer.opacity}
-                filter="url(#rain-blur)"
-                initial={{ y: '-110%' }}
-                animate={{ y: '220%' }}
-                transition={{ duration: dur, delay, repeat: Infinity, ease: 'linear', repeatDelay: 0 }}
-              />
-            );
-          })
-        )}
-      </svg>
-      {/* Mist overlay */}
-      <motion.div className="absolute inset-0"
-        style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(147,197,253,0.04) 40%, rgba(147,197,253,0.08) 100%)' }}
-        animate={{ opacity: [0.5, 1, 0.5] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-      />
-    </div>
-  );
-};
-
-// Birds — realistic wing-beat simulation
-const Birds = ({ count = 6 }) => {
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 5 }}>
-      {Array.from({ length: count }, (_, i) => {
-        const y = 6 + Math.random() * 22;
-        const delay = i * 3.5;
-        const scale = 0.5 + Math.random() * 0.7;
-        const yDrift = (Math.random() - 0.5) * 20;
-        return (
-          <motion.div key={i} className="absolute"
-            style={{ top: `${y}%`, left: '-8%' }}
-            animate={{ x: ['0vw', '115vw'], y: [0, yDrift * 0.3, yDrift, yDrift * 0.3, 0] }}
-            transition={{ x: { duration: 20 + i * 4, delay, repeat: Infinity, ease: 'linear' }, y: { duration: 6, delay, repeat: Infinity, ease: 'easeInOut' } }}
-          >
-            <motion.svg width={28 * scale} height={14 * scale} viewBox="0 0 28 14" fill="none"
-              animate={{ scaleY: [1, 0.5, 1, 0.5, 1] }}
-              transition={{ duration: 0.6, repeat: Infinity, ease: 'easeInOut' }}>
-              <path d="M2 7 Q7 2 14 7 Q21 2 26 7" stroke="rgba(209,250,229,0.7)" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-            </motion.svg>
-          </motion.div>
-        );
-      })}
-    </div>
-  );
-};
-
-// Advanced trees — multiple layers, parallax depth
-const TreeLine = ({ layer = 0 }) => {
-  const configs = [
-    { count: 12, heightRange: [60, 110], spread: 100, color: '#14532d', opacity: 0.9, trunk: '#713f12' },
-    { count: 8, heightRange: [45, 75], spread: 100, color: '#166534', opacity: 0.6, trunk: '#92400e' },
-    { count: 6, heightRange: [30, 55], spread: 100, color: '#15803d', opacity: 0.35, trunk: '#a16207' },
-  ];
-  const cfg = configs[layer];
-  const trees = Array.from({ length: cfg.count }, (_, i) => ({
-    x: (i / cfg.count) * cfg.spread + Math.random() * (cfg.spread / cfg.count) * 0.6,
-    h: cfg.heightRange[0] + Math.random() * (cfg.heightRange[1] - cfg.heightRange[0]),
-    w: 28 + Math.random() * 24,
-    swayDelay: Math.random() * 4,
-  }));
-
-  return (
-    <div className="absolute bottom-0 left-0 right-0 pointer-events-none overflow-hidden"
-      style={{ zIndex: 6 + layer, opacity: cfg.opacity }}>
-      {trees.map((tree, i) => (
-        <motion.div key={i} className="absolute bottom-0"
-          style={{ left: `${tree.x}%`, transformOrigin: 'bottom center' }}
-          initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
-          transition={{ duration: 1.4, delay: 0.3 + i * 0.05, ease: [0.34, 1.56, 0.64, 1] }}>
-          <motion.div
-            animate={{ rotate: [-1, 1, -1] }}
-            transition={{ duration: 5 + tree.swayDelay, repeat: Infinity, ease: 'easeInOut', delay: tree.swayDelay }}
-            style={{ transformOrigin: 'bottom center' }}>
-            <svg width={tree.w} height={tree.h} viewBox={`0 0 ${tree.w} ${tree.h}`} fill="none">
-              {/* Trunk */}
-              <rect x={tree.w / 2 - 3} y={tree.h * 0.62} width="6" height={tree.h * 0.38}
-                fill={cfg.trunk} rx="2" opacity="0.8" />
-              {/* Bottom foliage */}
-              <ellipse cx={tree.w / 2} cy={tree.h * 0.65} rx={tree.w * 0.48} ry={tree.h * 0.28}
-                fill={cfg.color} opacity="0.55" />
-              {/* Mid foliage */}
-              <ellipse cx={tree.w / 2} cy={tree.h * 0.45} rx={tree.w * 0.38} ry={tree.h * 0.25}
-                fill={cfg.color} opacity="0.7" />
-              {/* Top foliage */}
-              <ellipse cx={tree.w / 2} cy={tree.h * 0.25} rx={tree.w * 0.26} ry={tree.h * 0.2}
-                fill={cfg.color} opacity="0.85" />
-              {/* Crown */}
-              <ellipse cx={tree.w / 2} cy={tree.h * 0.1} rx={tree.w * 0.16} ry={tree.h * 0.12}
-                fill={cfg.color} opacity="0.95" />
-            </svg>
-          </motion.div>
-        </motion.div>
-      ))}
-    </div>
-  );
-};
-
-// Grass blades row — lush field
-const GrassField = () => (
-  <div className="absolute bottom-0 left-0 right-0 pointer-events-none overflow-hidden"
-    style={{ zIndex: 9, height: 48 }}>
-    {Array.from({ length: 80 }, (_, i) => {
-      const h = 20 + Math.random() * 28;
-      const x = (i / 80) * 100 + Math.random() * 0.8;
-      const delay = Math.random() * 3;
-      const tilt = (Math.random() - 0.5) * 8;
-      return (
-        <motion.div key={i} className="absolute bottom-0"
-          style={{ left: `${x}%`, transformOrigin: 'bottom center' }}
-          initial={{ scaleY: 0 }}
-          animate={{ scaleY: 1, rotate: [tilt - 2, tilt + 2, tilt - 2] }}
-          transition={{
-            scaleY: { duration: 0.9, delay: 0.8 + i * 0.008, ease: [0.34, 1.56, 0.64, 1] },
-            rotate: { duration: 3 + delay, repeat: Infinity, ease: 'easeInOut', delay },
-          }}>
-          <svg width="6" height={h} viewBox={`0 0 6 ${h}`} fill="none">
-            <path d={`M3 ${h} C3 ${h} ${1 + Math.random() * 2} ${h * 0.4} ${2 + Math.random() * 2} 0`}
-              stroke={`hsl(${130 + Math.random() * 20}, ${60 + Math.random() * 25}%, ${35 + Math.random() * 15}%)`}
-              strokeWidth="1.2" strokeLinecap="round" />
-          </svg>
-        </motion.div>
-      );
-    })}
+// CSS-only rain — replaces 55 framer-motion SVG lines
+const AdvancedRain = () => (
+  <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 4 }}>
+    <div className="css-rain" />
+    <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(147,197,253,0.04) 40%, rgba(147,197,253,0.08) 100%)', animation: 'mist-pulse 4s ease-in-out infinite' }} />
   </div>
 );
 
-// Wheat stalks
+// Birds — 3 CSS-animated birds (was 6 framer-motion)
+const Birds = () => (
+  <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 5 }}>
+    {[{ top: '8%', delay: '0s', dur: '22s' }, { top: '16%', delay: '7s', dur: '28s' }, { top: '24%', delay: '14s', dur: '25s' }].map((b, i) => (
+      <div key={i} className="css-bird" style={{ top: b.top, animationDuration: b.dur, animationDelay: b.delay }}>
+        <svg width="24" height="12" viewBox="0 0 28 14" fill="none">
+          <path d="M2 7 Q7 2 14 7 Q21 2 26 7" stroke="rgba(209,250,229,0.65)" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+        </svg>
+      </div>
+    ))}
+  </div>
+);
+
+// TreeLine — static SVG silhouette (no per-tree animation overhead)
+const TreeLine = ({ layer = 0 }) => {
+  const configs = [
+    { color: '#14532d', opacity: 0.9, zIndex: 6 },
+    { color: '#166534', opacity: 0.6, zIndex: 7 },
+    { color: '#15803d', opacity: 0.35, zIndex: 8 },
+  ];
+  const cfg = configs[layer];
+  const heights = [90, 70, 105, 80, 95, 75, 100, 85, 70, 110, 88, 72];
+  return (
+    <div className="absolute bottom-0 left-0 right-0 pointer-events-none overflow-hidden"
+      style={{ zIndex: cfg.zIndex, opacity: cfg.opacity }}>
+      <svg width="100%" height="120" viewBox="0 0 1200 120" preserveAspectRatio="none" fill={cfg.color}>
+        <path d="M0 120 L0 80 Q50 30 100 70 Q150 20 200 60 Q250 10 300 55 Q350 15 400 50 Q450 5 500 45 Q550 20 600 55 Q650 8 700 48 Q750 18 800 55 Q850 12 900 52 Q950 22 1000 58 Q1050 10 1100 50 Q1150 25 1200 60 L1200 120 Z" />
+      </svg>
+    </div>
+  );
+};
+
+// GrassField — CSS SVG silhouette (replaces 80 animated motion.divs)
+const GrassField = () => (
+  <div className="absolute bottom-0 left-0 right-0 pointer-events-none overflow-hidden"
+    style={{ zIndex: 9, height: 52 }}>
+    <svg width="100%" height="52" viewBox="0 0 1200 52" preserveAspectRatio="none">
+      {Array.from({ length: 30 }, (_, i) => {
+        const x = i * 40 + 5;
+        const h = 20 + (i % 5) * 6;
+        const col = `hsl(${135 + (i % 4) * 5}, 65%, ${32 + (i % 3) * 6}%)`;
+        return <path key={i} d={`M${x} 52 C${x} 52 ${x - 4} ${52 - h * 0.5} ${x - 2} ${52 - h}`}
+          stroke={col} strokeWidth="2" strokeLinecap="round" fill="none"
+          style={{ animation: `grass-sway ${2.5 + (i % 4) * 0.5}s ease-in-out ${(i % 5) * 0.4}s infinite alternate` }} />;
+      })}
+    </svg>
+  </div>
+);
+
+// WheatField — static SVG row (replaces 45 animated motion.divs)
 const WheatField = () => (
   <div className="absolute bottom-0 left-0 right-0 pointer-events-none overflow-hidden"
     style={{ zIndex: 10, height: 70 }}>
-    {Array.from({ length: 45 }, (_, i) => {
-      const x = (i / 45) * 100 + Math.random() * 1.5;
-      const delay = Math.random() * 2;
-      return (
-        <motion.div key={i} className="absolute bottom-0"
-          style={{ left: `${x}%`, transformOrigin: 'bottom center' }}
-          initial={{ scaleY: 0 }}
-          animate={{ scaleY: 1, rotate: [-2, 2, -2] }}
-          transition={{
-            scaleY: { duration: 1, delay: 1 + i * 0.015, ease: [0.34, 1.56, 0.64, 1] },
-            rotate: { duration: 4 + delay, repeat: Infinity, ease: 'easeInOut', delay },
-          }}>
-          <svg width="12" height="68" viewBox="0 0 12 68" fill="none">
-            <path d="M6 68 L6 20" stroke="#d97706" strokeWidth="1.2" opacity="0.7" />
-            <ellipse cx="6" cy="18" rx="3" ry="5" fill="#b45309" opacity="0.65" />
-            <ellipse cx="6" cy="13" rx="2.5" ry="4" fill="#92400e" opacity="0.55"
-              style={{ transform: 'rotate(-15deg)', transformOrigin: '6px 13px' }} />
-            <ellipse cx="6" cy="13" rx="2.5" ry="4" fill="#92400e" opacity="0.55"
-              style={{ transform: 'rotate(15deg)', transformOrigin: '6px 13px' }} />
-          </svg>
-        </motion.div>
-      );
-    })}
+    <svg width="100%" height="70" viewBox="0 0 1200 70" preserveAspectRatio="none">
+      {Array.from({ length: 25 }, (_, i) => {
+        const x = i * 48 + 10;
+        return (
+          <g key={i} style={{ animation: `grass-sway ${3.5 + (i % 4) * 0.6}s ease-in-out ${(i % 5) * 0.35}s infinite alternate`, transformOrigin: `${x}px 70px` }}>
+            <line x1={x} y1="70" x2={x} y2="22" stroke="#d97706" strokeWidth="1.5" opacity="0.7" />
+            <ellipse cx={x} cy="20" rx="4" ry="6" fill="#b45309" opacity="0.65" />
+            <ellipse cx={x - 3} cy="15" rx="3" ry="5" fill="#92400e" opacity="0.5" transform={`rotate(-15 ${x - 3} 15)`} />
+            <ellipse cx={x + 3} cy="15" rx="3" ry="5" fill="#92400e" opacity="0.5" transform={`rotate(15 ${x + 3} 15)`} />
+          </g>
+        );
+      })}
+    </svg>
   </div>
 );
 
@@ -699,7 +562,8 @@ export default function LandingPage() {
       <SpaceStars />
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;600;700&family=Noto+Sans+Bengali:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+        /* Fonts now loaded from index.html <head> for performance */
+        /* @import removed — using preconnect + <link> in HTML instead */
 
         * { box-sizing: border-box; }
 
@@ -775,6 +639,41 @@ export default function LandingPage() {
         @keyframes dawn-rise {
           0% { opacity: 0; transform: translateY(20px); }
           100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Performance CSS animations (replace framer-motion) ── */
+        @keyframes star-twinkle { 0%{opacity:0.2;transform:scale(0.8)} 100%{opacity:0.8;transform:scale(1.2)} }
+        @keyframes shoot { 0%{left:110%;opacity:0} 5%{opacity:1} 90%{opacity:0.8} 100%{left:-10%;opacity:0} }
+        @keyframes grass-sway { 0%{transform:rotate(-2deg)} 100%{transform:rotate(2deg)} }
+        @keyframes mist-pulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+        @keyframes bird-fly { from{left:-8%} to{left:110%} }
+        @keyframes hero-orb1 { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(80px,-60px) scale(1.1)} 66%{transform:translate(-50px,80px) scale(0.9)} }
+        @keyframes hero-orb2 { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(-100px,60px) scale(0.9)} 66%{transform:translate(70px,-70px) scale(1.15)} }
+        @keyframes rain-fall {
+          0%{background-position:0 0}
+          100%{background-position:-20px 300px}
+        }
+
+        .shooting-star {
+          position:absolute; width:150px; height:1px;
+          background:linear-gradient(to right,transparent,white,transparent);
+          transform:rotate(-35deg); opacity:0;
+          animation:shoot 14s linear infinite;
+        }
+
+        .css-bird {
+          position:absolute; left:-8%;
+          animation:bird-fly linear infinite;
+        }
+
+        .css-rain {
+          position:absolute; inset:0;
+          background-image:repeating-linear-gradient(
+            -12deg,
+            transparent, transparent 4px,
+            rgba(186,230,253,0.22) 4px, rgba(186,230,253,0.22) 5px
+          );
+          animation:rain-fall 0.7s linear infinite;
         }
 
         .scroll-hide { scrollbar-width: none; }
@@ -881,23 +780,14 @@ export default function LandingPage() {
       ══════════════════════════════════════════════ */}
       <section className="relative min-h-screen flex flex-col items-center justify-center pt-20 overflow-hidden px-4">
 
-        {/* Dynamic Moving Background Elements */}
+        {/* CSS-animated gradient orbs — no JS runtime cost */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-          <motion.div
-            className="absolute top-[20%] left-[20%] w-[500px] h-[500px] rounded-full bg-green-500/10 blur-[120px]"
-            animate={{ x: [0, 120, -80, 0], y: [0, -80, 120, 0], scale: [1, 1.1, 0.9, 1] }}
-            transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <motion.div
-            className="absolute bottom-[10%] right-[10%] w-[600px] h-[600px] rounded-full bg-emerald-600/10 blur-[140px]"
-            animate={{ x: [0, -150, 100, 0], y: [0, 100, -100, 0], scale: [1, 0.9, 1.15, 1] }}
-            transition={{ duration: 30, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          />
-          <motion.div
-            className="absolute top-[40%] left-[60%] w-[400px] h-[400px] rounded-full bg-blue-500/10 blur-[120px]"
-            animate={{ x: [0, 100, -50, 0], y: [0, 50, -100, 0] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 5 }}
-          />
+          <div className="absolute top-[20%] left-[20%] w-[500px] h-[500px] rounded-full bg-green-500/10 blur-[120px]"
+            style={{ animation: 'hero-orb1 25s ease-in-out infinite' }} />
+          <div className="absolute bottom-[10%] right-[10%] w-[600px] h-[600px] rounded-full bg-emerald-600/8 blur-[140px]"
+            style={{ animation: 'hero-orb2 30s ease-in-out 2s infinite' }} />
+          <div className="absolute top-[40%] left-[60%] w-[400px] h-[400px] rounded-full bg-blue-500/8 blur-[120px]"
+            style={{ animation: 'hero-orb1 20s ease-in-out 5s infinite' }} />
         </div>
 
         {/* HERO TEXT */}
