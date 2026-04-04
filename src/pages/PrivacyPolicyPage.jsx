@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import LandingFooter from '../components/LandingFooter';
+import { useLanguage } from '../context/LanguageContext';
 
 const PrivacyPolicyPage = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const sections = [
     {
       title: 'Information We Collect',
@@ -56,7 +58,7 @@ const PrivacyPolicyPage = () => {
       <Navbar dark={true} />
       
       {/* Back Button */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-10 sm:pt-12">
         <button
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 sm:gap-3 text-gray-400 hover:text-white transition-all duration-200 text-xs sm:text-sm font-medium group"
@@ -64,12 +66,12 @@ const PrivacyPolicyPage = () => {
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center group-hover:border-krishi-400/60 group-hover:text-krishi-400 transition-all duration-200 group-hover:scale-105 backdrop-blur-sm">
             <ArrowLeft size={14} className="sm:size-16" />
           </span>
-          <span className="hidden sm:inline">Go Back</span>
-          <span className="sm:hidden">← Back</span>
+          <span className="hidden sm:inline">{t('common.goBack')}</span>
+          <span className="sm:hidden">← {t('common.back')}</span>
         </button>
       </div>
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-32 pb-20 px-6 md:px-16">
+      <section className="relative overflow-hidden pt-16 pb-20 px-6 md:px-16">
         <div className="max-w-4xl mx-auto text-center">
           <motion.h1 
             className="font-playfair text-5xl md:text-7xl font-bold text-white mb-6"
@@ -77,7 +79,7 @@ const PrivacyPolicyPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            Privacy <span className="text-krishi-400">Policy</span>
+            {t('privacy.title')}
           </motion.h1>
           <div className="w-24 h-1 bg-krishi-400 mx-auto mb-8" />
           <motion.p 

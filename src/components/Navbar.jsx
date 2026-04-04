@@ -424,7 +424,7 @@ const Navbar = ({ dark = false }) => {
                     className="btn-scan-nav"
                     onClick={() => navigate('/detection')}
                   >
-                    <Scan size={14} strokeWidth={2.5} /> Diagnose
+                    <Scan size={14} strokeWidth={2.5} /> {t('nav.detection')}
                   </button>
 
                   <button
@@ -443,7 +443,7 @@ const Navbar = ({ dark = false }) => {
                 className="btn-scan-nav"
                 style={{ textDecoration: 'none' }}
               >
-                Sign in <ArrowRight size={15} strokeWidth={2.5} />
+                {t('common.signin')} <ArrowRight size={15} strokeWidth={2.5} />
               </Link>
             )}
 
@@ -495,11 +495,11 @@ const Navbar = ({ dark = false }) => {
 
                <button className={`nb-b-item ${location.search === '?chat=true' ? 'nb-b-item--active' : ''}`} onClick={() => navigate('/dashboard?chat=true')}>
                 <Bot size={22} strokeWidth={2} />
-                <span>Chat</span>
+                <span>{t('dash.aiAssistant')}</span>
               </button>
               <Link to="/schemes" className={`nb-b-item ${location.pathname === '/schemes' ? 'nb-b-item--active' : ''}`}>
                 <Award size={22} strokeWidth={2} />
-                <span>Schemes</span>
+                <span>{t('nav.schemes')}</span>
               </Link>
             </div>
           </motion.nav>
@@ -575,7 +575,7 @@ const Navbar = ({ dark = false }) => {
                 style={{ height: 60, width: '100%', justifyContent: 'center', fontSize: 15, borderRadius: 20 }}
                 onClick={() => { navigate('/detection'); setOpen(false); }}
               >
-                <Scan size={20} /> Open AI Scanner
+                <Scan size={20} /> {t('nav.detection')}
               </button>
               {user ? (
                 <button
@@ -592,7 +592,7 @@ const Navbar = ({ dark = false }) => {
                   style={{ textDecoration: 'none', justifyContent: 'center', height: 60, borderRadius: 20 }}
                   onClick={() => setOpen(false)}
                 >
-                  Sign In <ArrowRight size={20} />
+                  {t('common.signin')} <ArrowRight size={20} />
                 </Link>
               )}
             </div>

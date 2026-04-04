@@ -583,6 +583,7 @@ const Dashboard = () => {
    const [marketOpen, setMarketOpen] = useState(false);
    const [calendarOpen, setCalendarOpen] = useState(false);
    const [weatherOpen, setWeatherOpen] = useState(false);
+   const [communityOpen, setCommunityOpen] = useState(false);
    const [dashWeather, setDashWeather] = useState(null);
    const [chatMessages, setChatMessages] = useState([
       { role: 'bot', text: 'Hello! I can help analyse your crop health, explain seasonal schedules, or answer questions about your farm.' }
@@ -970,7 +971,17 @@ const Dashboard = () => {
         .d-crop-health-label { font-size: 10px; font-weight: 800; color: var(--ink-4); letter-spacing: 0.1em; text-transform: uppercase; }
         .d-crop-score { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; color: var(--ink); line-height: 1; }
         
-        .d-empty { padding: 60px 20px; text-align: center; background: var(--surface); border: 1px dashed var(--border-2); border-radius: var(--r-xl); }
+        .d-scans-box {
+          border: 2px dotted var(--border-2);
+          border-radius: var(--r-xl);
+          padding: 24px;
+          min-height: 480px;
+          display: flex;
+          flex-direction: column;
+          background: rgba(255,255,255,0.3);
+        }
+
+        .d-empty { padding: 40px 20px; text-align: center; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .d-empty svg { color: var(--green-mid); margin: 0 auto 16px; opacity: 0.5; }
         .d-empty p { font-size: 14px; color: var(--ink-3); font-weight: 600; }
 
@@ -1299,23 +1310,23 @@ const Dashboard = () => {
 
             {/* Tiles */}
             <div className="d-tiles">
-               <div className="d-tile" style={{ '--tc': 'var(--sky)', '--tb': 'var(--sky-bg)' }} onClick={() => setWeatherOpen(true)}>
-                  <div className="d-tile-icon">{getWeatherIcon(dashWeather?.weather?.[0]?.id, 17)}</div>
-                  <p className="d-tile-label">{t('dash.weather')}</p>
-                  <p className="d-tile-value">{dashWeather ? `${Math.round(dashWeather.main.temp)}°C` : '—°C'}</p>
-                  <p className="d-tile-sub">{dashWeather ? `${dashWeather.weather[0].description} · ${dashWeather.main.humidity}%` : 'Loading...'}</p>
-               </div>
-               <div className="d-tile" style={{ '--tc': 'var(--green)', '--tb': 'var(--green-bg)' }} onClick={() => navigate('/crop-picker')}>
-                  <div className="d-tile-icon"><Sprout size={17} /></div>
-                  <p className="d-tile-label">{t('nav.cropPicker')}</p>
-                  <p className="d-tile-value">Smart Pick</p>
-                  <p className="d-tile-sub">AI Fasal Recommendation</p>
+               <div className="d-tile" style={{ '--tc': 'var(--amber)', '--tb': 'var(--amber-bg)' }} onClick={() => navigate('/profit-calculator')}>
+                  <div className="d-tile-icon"><Calculator size={17} /></div>
+                  <p className="d-tile-label">{t('nav.profitCalc')}</p>
+                  <p className="d-tile-value">Calculator</p>
+                  <p className="d-tile-sub">Calculate your expenses & earnings</p>
                </div>
                <div id="mandi-section" className="d-tile" style={{ '--tc': 'var(--amber)', '--tb': 'var(--amber-bg)' }} onClick={() => setMarketOpen(true)}>
                   <div className="d-tile-icon"><TrendingUp size={17} /></div>
                   <p className="d-tile-label">{t('dash.mandiPrices')}</p>
                   <p className="d-tile-value">{t('dash.live')}</p>
                   <p className="d-tile-sub">{t('dash.searchMarket')}</p>
+               </div>
+               <div className="d-tile" style={{ '--tc': 'var(--sky)', '--tb': 'var(--sky-bg)' }} onClick={() => setWeatherOpen(true)}>
+                  <div className="d-tile-icon">{getWeatherIcon(dashWeather?.weather?.[0]?.id, 17)}</div>
+                  <p className="d-tile-label">{t('dash.weather')}</p>
+                  <p className="d-tile-value">{dashWeather ? `${Math.round(dashWeather.main.temp)}°C` : '—°C'}</p>
+                  <p className="d-tile-sub">{dashWeather ? `${dashWeather.weather[0].description} · ${dashWeather.main.humidity}%` : 'Loading...'}</p>
                </div>
                <div className="d-tile" style={{ '--tc': '#5b4fa0', '--tb': '#f0eef9' }} onClick={() => setChatOpen(true)}>
                   <div className="d-tile-icon"><Bot size={17} /></div>
@@ -1332,42 +1343,57 @@ const Dashboard = () => {
                      <h2 className="d-sec-title">{t('dash.recentScans')}</h2>
                      <Link to="/inventory" className="d-sec-link">{t('prof.viewAll')} <ArrowRight size={13} /></Link>
                   </div>
-                  {loading ? (
-                     <div className="d-empty"><p>Loading your crops…</p></div>
-                  ) : crops.length === 0 ? (
-                     <div className="d-empty">
-                        <Sprout size={28} />
-                        <p>No crops yet. Run a diagnosis to get started.</p>
-                     </div>
-                  ) : (
-                     <div className="d-crop-list">
-                        {crops.slice(0, 7).map(crop => (
-                           <div key={crop.id} className="d-crop-row" onClick={() => navigate('/inventory')}>
-                              <div className="d-crop-l">
-                                 <div className="d-crop-ico">
-                                    {crop.imageUrl ? <img src={crop.imageUrl} alt={crop.name} /> : <Leaf size={22} />}
-                                 </div>
-                                 <div>
-                                    <p className="d-crop-name">{crop.name}</p>
-                                    <div className="d-crop-meta">
-                                       STATUS: <span>{crop.status}</span>
+                  <div className="d-scans-box">
+                     {loading ? (
+                        <div className="d-empty"><p>Loading your crops…</p></div>
+                     ) : crops.length === 0 ? (
+                        <div className="d-empty">
+                           <Sprout size={28} />
+                           <p>No crops yet. Run a diagnosis to get started.</p>
+                        </div>
+                     ) : (
+                        <div className="d-crop-list">
+                           {crops.slice(0, 7).map(crop => (
+                              <div key={crop.id} className="d-crop-row" onClick={() => navigate('/inventory')}>
+                                 <div className="d-crop-l">
+                                    <div className="d-crop-ico">
+                                       {crop.imageUrl ? <img src={crop.imageUrl} alt={crop.name} /> : <Leaf size={22} />}
+                                    </div>
+                                    <div>
+                                       <p className="d-crop-name">{crop.name}</p>
+                                       <div className="d-crop-meta">
+                                          STATUS: <span>{crop.status}</span>
+                                       </div>
                                     </div>
                                  </div>
+                                 <div className="d-crop-r">
+                                    <p className="d-crop-health-label">HEALTH SCORE</p>
+                                    <p className="d-crop-score">{crop.healthScore}%</p>
+                                 </div>
                               </div>
-                              <div className="d-crop-r">
-                                 <p className="d-crop-health-label">HEALTH SCORE</p>
-                                 <p className="d-crop-score">{crop.healthScore}%</p>
-                              </div>
-                           </div>
-                        )
-                        )}
-                     </div>
-                  )}
+                           )
+                           )}
+                        </div>
+                     )}
+                  </div>
                </div>
 
                {/* Sidebar */}
                <div className="d-sidebar">
                   <p className="d-sb-label">{t('dash.quickActions')}</p>
+                  
+                  <button className="d-acard" onClick={() => navigate('/profit-calculator')}>
+                     <div className="d-aico" style={{ background: '#fff5e6', color: '#d97706' }}><Calculator size={16} /></div>
+                     <div><p className="d-aname">{t('nav.profitCalc')}</p><p className="d-asub">Kamai aur nuksan ka hisaab</p></div>
+                     <ChevronRight size={14} className="d-aarr" />
+                  </button>
+
+                  <button id="live-market-action" className="d-acard" onClick={() => setMarketOpen(true)}>
+                     <div className="d-aico d-aico--a"><TrendingUp size={16} /></div>
+                     <div><p className="d-aname">{t('dash.mandiPrices')}</p><p className="d-asub">{t('dash.searchMarket')}</p></div>
+                     <ChevronRight size={14} className="d-aarr" />
+                  </button>
+
                   <button className="d-acard" onClick={() => setWeatherOpen(true)}>
                      <div className="d-aico d-aico--s">{getWeatherIcon(dashWeather?.weather?.[0]?.id, 16)}</div>
                      <div>
@@ -1377,26 +1403,24 @@ const Dashboard = () => {
                      <ChevronRight size={14} className="d-aarr" />
                   </button>
 
-                  <button id="live-market-action" className="d-acard" onClick={() => setMarketOpen(true)}>
-                     <div className="d-aico d-aico--a"><TrendingUp size={16} /></div>
-                     <div><p className="d-aname">{t('dash.mandiPrices')}</p><p className="d-asub">{t('dash.searchMarket')}</p></div>
-                     <ChevronRight size={14} className="d-aarr" />
-                  </button>
                   <button className="d-acard" onClick={() => setChatOpen(true)}>
                      <div className="d-aico d-aico--p"><Bot size={16} /></div>
                      <div><p className="d-aname">{t('dash.aiAssistant')}</p><p className="d-asub">{t('dash.askAnything')}</p></div>
                      <ChevronRight size={14} className="d-aarr" />
                   </button>
+                  
                   <button className="d-acard" onClick={() => navigate('/crop-picker')}>
                      <div className="d-aico" style={{ background: '#eaf4ee', color: '#2e7d4f' }}><Sprout size={16} /></div>
                      <div><p className="d-aname">{t('nav.cropPicker')}</p><p className="d-asub">AI fasal recommendation</p></div>
                      <ChevronRight size={14} className="d-aarr" />
                   </button>
-                  <button className="d-acard" onClick={() => navigate('/profit-calculator')}>
-                     <div className="d-aico" style={{ background: '#fff5e6', color: '#d97706' }}><Calculator size={16} /></div>
-                     <div><p className="d-aname">{t('nav.profitCalc')}</p><p className="d-asub">Kamai aur nuksan ka hisaab</p></div>
+
+                  <button className="d-acard" onClick={() => setCommunityOpen(true)}>
+                     <div className="d-aico" style={{ background: '#f5f5f5', color: '#666' }}><Users size={16} /></div>
+                     <div><p className="d-aname">{t('dash.community')}</p><p className="d-asub">Kisan Bhai-yara network</p></div>
                      <ChevronRight size={14} className="d-aarr" />
                   </button>
+
                   <hr className="d-divider" />
                   <div className="d-pstrip" onClick={() => navigate('/profile')}>
                      <div className="d-pstrip-l">
@@ -1598,11 +1622,63 @@ const Dashboard = () => {
 
          {/* Modals */}
          {weatherOpen && <WeatherModal onClose={() => setWeatherOpen(false)} />}
-
-
+         
+         {communityOpen && (
+            <Modal title={t('dash.community') || 'Community'} subtitle="Farmer Network" onClose={() => setCommunityOpen(false)}>
+               <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                  <div style={{ 
+                     borderRadius: '24px', 
+                     overflow: 'hidden', 
+                     marginBottom: '24px',
+                     boxShadow: '0 12px 40px rgba(0,0,0,0.1)',
+                     border: '1px solid rgba(134, 239, 172, 0.4)',
+                     position: 'relative',
+                     background: '#050709',
+                     height: '240px',
+                     display: 'flex',
+                     alignItems: 'center',
+                     justifyContent: 'center'
+                  }}>
+                     {/* Immersive Background for Community */}
+                     <div style={{ position: 'absolute', inset: 0, opacity: 0.6 }}>
+                        <Features3D style={{ width: '100%', height: '100%' }} />
+                     </div>
+                     <img src="/community_coming_soon_1775315413770.png" alt="Community Coming Soon" 
+                        style={{ 
+                           width: '180px', 
+                           position: 'relative', 
+                           zIndex: 2,
+                           filter: 'drop-shadow(0 0 20px rgba(74, 222, 128, 0.3))'
+                        }} 
+                     />
+                  </div>
+                  <h3 style={{ fontSize: '24px', fontWeight: 800, color: 'var(--ink)', marginBottom: '10px' }}>Coming Soon</h3>
+                  <p style={{ fontSize: '14px', color: 'var(--ink-3)', lineHeight: 1.6, maxWidth: '300px', margin: '0 auto 24px' }}>
+                     We are building a powerful network for Indian farmers to connect, share knowledge, and grow together.
+                  </p>
+                  <button 
+                     onClick={() => setCommunityOpen(false)}
+                     style={{ 
+                        padding: '12px 32px', 
+                        background: 'linear-gradient(135deg, #4ade80, #16a34a)', 
+                        color: '#fff', 
+                        border: 'none', 
+                        borderRadius: '12px', 
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        transition: 'transform 0.2s',
+                        boxShadow: '0 8px 16px rgba(74, 222, 128, 0.25)'
+                     }}
+                     onMouseOver={e => e.currentTarget.style.transform = 'scale(1.05)'}
+                     onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+                  >
+                     Got it!
+                  </button>
+               </div>
+            </Modal>
+         )}
 
          <FloatingMic />
-
       </>
    );
 };

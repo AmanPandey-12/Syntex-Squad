@@ -4,9 +4,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, MapPin, Phone, Github, Send, CheckCircle, ArrowLeft, Leaf, MessageSquare, Linkedin, Globe, Sparkles } from 'lucide-react';
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { useLanguage } from '../context/LanguageContext';
 
 const ContactPage = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -124,21 +126,21 @@ const ContactPage = () => {
            <span style={{ fontSize: 18, fontWeight: 700, color: 'white' }}>KrishiAI</span>
         </Link>
         <button onClick={() => navigate(-1)} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)', padding: '8px 16px', borderRadius: 100, fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <ArrowLeft size={14} /> Back
+          <ArrowLeft size={14} /> {t('common.back')}
         </button>
       </nav>
 
-      <div className="grid-bg" style={{ position: 'relative', pt: '120px', minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+      <div className="grid-bg" style={{ position: 'relative', paddingTop: '40px', minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
         
         {/* Decorative Orbs */}
         <div style={{ position: 'absolute', top: '10%', left: '5%', width: '300px', height: '300px', background: 'rgba(74, 222, 128, 0.03)', borderRadius: '50%', filter: 'blur(80px)', animation: 'float 10s infinite' }} />
         <div style={{ position: 'absolute', bottom: '10%', right: '5%', width: '400px', height: '400px', background: 'rgba(34, 197, 94, 0.03)', borderRadius: '50%', filter: 'blur(100px)', animation: 'float 12s infinite reverse' }} />
 
-        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '120px 24px 60px', width: '100%' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '60px 24px 60px', width: '100%' }}>
           
           <div style={{ textAlign: 'center', marginBottom: '80px' }}>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-              <span style={{ color: '#4ade80', fontSize: '12px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase' }}>Contact Us</span>
+              <span style={{ color: '#4ade80', fontSize: '12px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase' }}>{t('contact.title')}</span>
               <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', fontWeight: 700, letterSpacing: '-0.04em', marginTop: '10px', color: 'white' }}>
                 How can we <span style={{ color: '#4ade80' }}>help?</span>
               </h1>

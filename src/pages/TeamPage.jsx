@@ -2,9 +2,11 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Github, Linkedin, Instagram, Globe, ExternalLink } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import LandingFooter from '../components/LandingFooter';
+import { useLanguage } from '../context/LanguageContext';
 
 const TeamPage = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const team = [
     {
@@ -81,7 +83,7 @@ const TeamPage = () => {
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: #06090a; font-family: 'Nunito', sans-serif; }
 
-        .team-page { min-height: 100vh; background: #06090a; padding-top: 80px; }
+        .team-page { min-height: 100vh; background: #06090a; padding-top: 20px; }
         .team-wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
 
         /* Back button */
@@ -159,14 +161,14 @@ const TeamPage = () => {
             <span className="team-back-ico">
               <ArrowLeft size={15} />
             </span>
-            Go Back
+            {t('common.goBack')}
           </button>
 
           {/* Hero */}
           <div className="team-hero">
             <span className="team-eyebrow">Syntax Squad</span>
             <h1 className="team-hero-title">
-              The Minds Behind<br />
+              {t('team.minds')}<br />
               <span>KrishiAI</span>
             </h1>
             <p className="team-hero-sub">

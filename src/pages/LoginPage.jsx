@@ -104,16 +104,16 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex font-sans">
-      {/* LEFT SIDE - Auth Form */}
+    <div className="min-h-screen bg-white flex flex-col lg:flex-row-reverse font-sans">
+      {/* RIGHT SIDE - Auth Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10 lg:p-16 relative">
         {/* Mobile Logo */}
         <div className="absolute top-6 left-6 lg:hidden flex items-center gap-2">
-          <div className="w-10 h-10 bg-gradient-to-br from-lime-400 to-lime-600 rounded-xl flex items-center justify-center shadow-lg">
+          <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
             <Leaf size={20} className="text-white" strokeWidth={2.5} />
           </div>
-          <span className="text-xl font-black text-slate-900">
-            Krishi<span className="text-lime-500">AI</span>
+          <span className="text-xl font-bold text-slate-900 tracking-tight">
+            Krishi<span className="text-green-600">AI</span>
           </span>
         </div>
 
@@ -125,13 +125,13 @@ const LoginPage = () => {
         >
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 mb-3">
-              {authMode === 'login' ? 'Welcome back' : 'Get started'}
+            <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-3 tracking-tight">
+              {authMode === 'login' ? 'Welcome back' : 'Create account'}
             </h1>
             <p className="text-slate-500 text-sm sm:text-base">
               {authMode === 'login'
-                ? 'Sign in to access your farming dashboard'
-                : 'Create your account and start farming smarter'}
+                ? 'Sign in to access your farming dashboard and insights'
+                : 'Join our community of farmers and start optimizing your yields'}
             </p>
           </div>
 
@@ -154,7 +154,7 @@ const LoginPage = () => {
                       required
                       value={name}
                       onChange={e => setName(e.target.value)}
-                      className="w-full bg-slate-50 border-2 border-slate-200 rounded-xl py-3 pl-12 pr-4 outline-none focus:border-lime-500 focus:bg-white transition-all text-slate-900 placeholder:text-slate-400"
+                      className="w-full bg-slate-50 border-2 border-slate-200 rounded-xl py-3 pl-12 pr-4 outline-none focus:border-green-600 focus:bg-white transition-all text-slate-900 placeholder:text-slate-400"
                     />
                   </div>
                 </motion.div>
@@ -162,16 +162,16 @@ const LoginPage = () => {
             </AnimatePresence>
 
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700">Email</label>
+              <label className="text-sm font-semibold text-slate-700">Email Address</label>
               <div className="relative">
                 <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="name@example.com"
                   required
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="w-full bg-slate-50 border-2 border-slate-200 rounded-xl py-3 pl-12 pr-4 outline-none focus:border-lime-500 focus:bg-white transition-all text-slate-900 placeholder:text-slate-400"
+                  className="w-full bg-slate-50 border-2 border-slate-200 rounded-xl py-3 pl-12 pr-4 outline-none focus:border-green-600 focus:bg-white transition-all text-slate-900 placeholder:text-slate-400"
                 />
               </div>
             </div>
@@ -186,7 +186,7 @@ const LoginPage = () => {
                   required
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="w-full bg-slate-50 border-2 border-slate-200 rounded-xl py-3 pl-12 pr-12 outline-none focus:border-lime-500 focus:bg-white transition-all text-slate-900 placeholder:text-slate-400"
+                  className="w-full bg-slate-50 border-2 border-slate-200 rounded-xl py-3 pl-12 pr-12 outline-none focus:border-green-600 focus:bg-white transition-all text-slate-900 placeholder:text-slate-400"
                 />
                 <button
                   type="button"
@@ -211,7 +211,7 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 bg-gradient-to-r from-lime-500 to-lime-600 text-white font-bold rounded-xl shadow-lg shadow-lime-500/30 hover:shadow-xl hover:shadow-lime-500/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-3.5 bg-[#2e7d4f] hover:bg-[#256640] text-white font-bold rounded-xl shadow-lg shadow-green-900/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -227,7 +227,7 @@ const LoginPage = () => {
           {/* Divider */}
           <div className="my-6 flex items-center gap-3">
             <div className="flex-1 h-px bg-slate-200" />
-            <span className="text-xs text-slate-400 font-medium">OR</span>
+            <span className="text-xs text-slate-400 font-medium tracking-widest uppercase">OR</span>
             <div className="flex-1 h-px bg-slate-200" />
           </div>
 
@@ -255,7 +255,7 @@ const LoginPage = () => {
                   setAuthMode(authMode === 'login' ? 'register' : 'login');
                   setError('');
                 }}
-                className="text-lime-600 font-semibold hover:underline"
+                className="text-green-700 font-bold hover:underline"
               >
                 {authMode === 'login' ? 'Sign up' : 'Sign in'}
               </button>
@@ -264,12 +264,12 @@ const LoginPage = () => {
         </motion.div>
       </div>
 
-      {/* RIGHT SIDE - Hero Content (Desktop Only) */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-16 flex-col justify-between relative overflow-hidden">
+      {/* LEFT SIDE - Hero Content (Desktop Only) */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#0c1a0e] via-[#1a2117] to-[#0c1a0e] p-16 flex-col justify-between relative overflow-hidden">
         {/* Animated Background */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-lime-500 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-green-500 rounded-full blur-[100px] animate-pulse" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-700 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1s' }} />
         </div>
 
         {/* Logo */}
@@ -279,12 +279,12 @@ const LoginPage = () => {
           transition={{ delay: 0.2 }}
           className="relative z-10"
         >
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-14 h-14 bg-gradient-to-br from-lime-400 to-lime-600 rounded-2xl flex items-center justify-center shadow-2xl">
-              <Leaf size={28} className="text-white" strokeWidth={2.5} />
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-2xl">
+              <Leaf size={24} className="text-slate-900" strokeWidth={2.5} />
             </div>
-            <span className="text-3xl font-black text-white">
-              Krishi<span className="text-lime-400">AI</span>
+            <span className="text-2xl font-bold text-white tracking-tight">
+              Krishi<span className="text-green-400">AI</span>
             </span>
           </div>
         </motion.div>
@@ -296,65 +296,34 @@ const LoginPage = () => {
           transition={{ delay: 0.4 }}
           className="relative z-10"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-lime-500/20 backdrop-blur-sm rounded-full text-lime-400 text-sm font-semibold border border-lime-500/30 mb-8">
-            <Sparkles size={16} />
-            <span>AI-Powered Agriculture</span>
-          </div>
-
-          <h2 className="text-5xl font-black text-white leading-tight mb-6">
-            Transform your farm with intelligent insights
+          <h2 className="text-5xl font-bold text-white leading-[1.1] mb-6 tracking-tight">
+            Smarter farming for a <span className="text-green-400">better future.</span>
           </h2>
 
-          <p className="text-lg text-slate-300 leading-relaxed mb-12 max-w-lg">
-            Join thousands of farmers using AI to detect crop diseases, optimize yields, and maximize profits with real-time market data.
+          <p className="text-lg text-slate-300 leading-relaxed mb-12 max-w-md">
+            Empowering Indian farmers with cutting-edge AI technology for disease detection, 
+            market intelligence, and sustainable agricultural practices.
           </p>
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-6"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-lime-500/20 rounded-xl flex items-center justify-center">
-                  <TrendingUp size={20} className="text-lime-400" />
+          <div className="space-y-4">
+             <div className="flex items-center gap-3 text-slate-300">
+                <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center text-green-400">
+                   <Leaf size={14} />
                 </div>
-              </div>
-              <p className="text-3xl font-black text-white mb-1">99.8%</p>
-              <p className="text-sm text-slate-400 font-medium">AI Accuracy</p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              className="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-6"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center">
-                  <Users size={20} className="text-emerald-400" />
+                <span>AI-Powered Crop Diagnostics</span>
+             </div>
+             <div className="flex items-center gap-3 text-slate-300">
+                <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center text-green-400">
+                   <TrendingUp size={14} />
                 </div>
-              </div>
-              <p className="text-3xl font-black text-white mb-1">10K+</p>
-              <p className="text-sm text-slate-400 font-medium">Active Users</p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
-              className="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-6"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
-                  <Shield size={20} className="text-blue-400" />
+                <span>Real-time Market Intelligence</span>
+             </div>
+             <div className="flex items-center gap-3 text-slate-300">
+                <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center text-green-400">
+                   <Shield size={14} />
                 </div>
-              </div>
-              <p className="text-3xl font-black text-white mb-1">100+</p>
-              <p className="text-sm text-slate-400 font-medium">Markets</p>
-            </motion.div>
+                <span>Sustainable Yield Optimization</span>
+             </div>
           </div>
         </motion.div>
 
@@ -365,8 +334,8 @@ const LoginPage = () => {
           transition={{ delay: 1 }}
           className="relative z-10"
         >
-          <p className="text-slate-400 text-sm">
-            Trusted by farmers across India • Powered by advanced AI technology
+          <p className="text-slate-500 text-sm font-medium">
+            © 2026 KrishiAI • Empowering Farmers Across India
           </p>
         </motion.div>
       </div>

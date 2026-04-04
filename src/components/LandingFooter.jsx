@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { Mail, MapPin, Phone, Github, Linkedin, Globe } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const LandingFooter = () => {
+  const { t } = useLanguage();
   return (
     <footer className="bg-[#06090a] border-t border-white/8 pt-16 pb-8 px-6 md:px-16">
       <div className="max-w-7xl mx-auto">
@@ -14,9 +16,9 @@ const LandingFooter = () => {
               </div>
               <h3 className="font-playfair text-2xl text-white">Krishi<span className="text-green-400">AI</span></h3>
             </div>
-            <p className="text-gray-400 text-sm mb-4">Grow Smarter. Cultivate Better.</p>
+            <p className="text-gray-400 text-sm mb-4">{t('footer.sub')}</p>
             <p className="text-gray-400 text-sm leading-relaxed">
-              AI-powered farming assistant built for Indian farmers. Detect crop diseases, track markets, and grow with confidence.
+              {t('footer.desc')}
             </p>
             {/* Social Links */}
             <div className="flex gap-2 mt-4">
@@ -53,30 +55,30 @@ const LandingFooter = () => {
 
           {/* Column 2 - Quick Links */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Quick Links</h4>
+            <h4 className="text-white font-semibold mb-4">{t('footer.quickLinks')}</h4>
             <div className="space-y-2">
-              <Link to="/" className="block text-gray-400 hover:text-krishi-400 text-sm transition-colors">Home</Link>
-              <Link to="/dashboard" className="block text-gray-400 hover:text-krishi-400 text-sm transition-colors">Dashboard</Link>
-              <Link to="/detection" className="block text-gray-400 hover:text-krishi-400 text-sm transition-colors">Disease Detection</Link>
-              <Link to="/inventory" className="block text-gray-400 hover:text-krishi-400 text-sm transition-colors">Crop Inventory</Link>
+              <Link to="/" className="block text-gray-400 hover:text-krishi-400 text-sm transition-colors">{t('common.home')}</Link>
+              <Link to="/dashboard" className="block text-gray-400 hover:text-krishi-400 text-sm transition-colors">{t('nav.dashboard')}</Link>
+              <Link to="/detection" className="block text-gray-400 hover:text-krishi-400 text-sm transition-colors">{t('nav.detection')}</Link>
+              <Link to="/inventory" className="block text-gray-400 hover:text-krishi-400 text-sm transition-colors">{t('nav.inventory')}</Link>
             </div>
           </div>
 
           {/* Column 3 - Company */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Company</h4>
+            <h4 className="text-white font-semibold mb-4">{t('footer.company')}</h4>
             <div className="space-y-2">
-              <Link to="/about" className="block text-gray-400 hover:text-krishi-400 text-sm transition-colors">About</Link>
-              <Link to="/team" className="block text-gray-400 hover:text-krishi-400 text-sm transition-colors">Team</Link>
-              <Link to="/contact" className="block text-gray-400 hover:text-krishi-400 text-sm transition-colors">Contact</Link>
-              <Link to="/privacy" className="block text-gray-400 hover:text-krishi-400 text-sm transition-colors">Privacy Policy</Link>
-              <Link to="/terms" className="block text-gray-400 hover:text-krishi-400 text-sm transition-colors">Terms of Service</Link>
+              <Link to="/about" className="block text-gray-400 hover:text-krishi-400 text-sm transition-colors">{t('nav.about')}</Link>
+              <Link to="/team" className="block text-gray-400 hover:text-krishi-400 text-sm transition-colors">{t('nav.team') || 'Team'}</Link>
+              <Link to="/contact" className="block text-gray-400 hover:text-krishi-400 text-sm transition-colors">{t('footer.contact')}</Link>
+              <Link to="/privacy" className="block text-gray-400 hover:text-krishi-400 text-sm transition-colors">{t('privacy.title')}</Link>
+              <Link to="/terms" className="block text-gray-400 hover:text-krishi-400 text-sm transition-colors">{t('terms.title')}</Link>
             </div>
           </div>
 
           {/* Column 4 - Contact Info */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Contact</h4>
+            <h4 className="text-white font-semibold mb-4">{t('footer.contact')}</h4>
             <div className="space-y-3">
               <div className="flex gap-2 items-start">
                 <Mail className="w-4 h-4 text-krishi-400 mt-0.5 shrink-0" />
@@ -96,13 +98,13 @@ const LandingFooter = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-2">
-          <p className="text-gray-500 text-xs">© 2026 KrishiAI. All rights reserved.</p>
-          <p className="text-gray-500 text-xs">Made with love for Indian Farmers</p>
+          <p className="text-gray-500 text-xs">© 2026 KrishiAI. {t('footer.rights')}</p>
+          <p className="text-gray-500 text-xs">{t('footer.madeWithLove')}</p>
         </div>
 
         {/* Credit Line */}
         <p className="text-center text-xs text-gray-600 mt-2">
-          "Crafted with passion by Jatin & Jitendra"
+          "{t('footer.craftedBy')}"
         </p>
       </div>
     </footer>
