@@ -2,14 +2,11 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Users, Target, Brain, Zap, Shield, Globe, ArrowLeft } from 'lucide-react';
-import Navbar from '../components/Navbar';
 import LandingFooter from '../components/LandingFooter';
-import { useLanguage } from '../context/LanguageContext';
 
 const AboutPage = () => {
   const navigate = useNavigate();
-  const { t } = useLanguage();
-  
+
   const teamMembers = [
     { name: 'Jatin', role: 'Team Lead & AI Engineer', initials: 'JT' },
     { name: 'Jitendra', role: 'Backend Engineer', initials: 'JD' },
@@ -20,8 +17,9 @@ const AboutPage = () => {
 
   return (
     <div className="min-h-screen bg-[#06090a]">
+
       {/* Back Button */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28">
         <button
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 sm:gap-3 text-gray-400 hover:text-white transition-all duration-200 text-xs sm:text-sm font-medium group"
@@ -29,23 +27,23 @@ const AboutPage = () => {
           <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center group-hover:border-krishi-400/60 group-hover:text-krishi-400 transition-all duration-200 group-hover:scale-105 backdrop-blur-sm">
             <ArrowLeft size={14} className="sm:size-16" />
           </span>
-          <span className="hidden sm:inline">{t('common.goBack')}</span>
-          <span className="sm:hidden">← {t('common.back')}</span>
+          <span className="hidden sm:inline">Go Back</span>
+          <span className="sm:hidden">← Back</span>
         </button>
       </div>
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-8 pb-20 px-6 md:px-16">
+      <section className="relative overflow-hidden pt-32 pb-20 px-6 md:px-16">
         <div className="max-w-6xl mx-auto text-center">
-          <motion.h1 
+          <motion.h1
             className="font-playfair text-5xl md:text-7xl font-bold text-white mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            {t('nav.about')} <span className="text-krishi-400">KrishiAI</span>
+            About <span className="text-krishi-400">KrishiAI</span>
           </motion.h1>
           <div className="w-24 h-1 bg-krishi-400 mx-auto mb-8" />
-          <motion.p 
+          <motion.p
             className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -66,7 +64,7 @@ const AboutPage = () => {
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <h2 className="font-playfair text-4xl font-bold text-white mb-6">{t('common.story')}</h2>
+              <h2 className="font-playfair text-4xl font-bold text-white mb-6">Our Story</h2>
               <div className="space-y-4 text-gray-300 leading-relaxed">
                 <p>
                   KrishiAI was born from a simple realization: Indian smallholder farmers deserve access to the same advanced technology that large agricultural corporations use. We saw firsthand how crop diseases could devastate entire harvests, leaving families in financial crisis.
@@ -79,7 +77,7 @@ const AboutPage = () => {
                 </p>
               </div>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -106,16 +104,16 @@ const AboutPage = () => {
       {/* Team Section */}
       <section className="py-20 px-6 md:px-16">
         <div className="max-w-6xl mx-auto">
-          <motion.h2 
+          <motion.h2
             className="font-playfair text-4xl font-bold text-white text-center mb-12"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            {t('team.title')}
+            Meet the Team
           </motion.h2>
-          
+
           <div className="flex flex-wrap justify-center gap-6">
             {teamMembers.map((member, index) => (
               <motion.div
@@ -140,16 +138,16 @@ const AboutPage = () => {
       {/* Mission Section */}
       <section className="py-20 px-6 md:px-16 bg-[#0a120b]">
         <div className="max-w-6xl mx-auto">
-          <motion.h2 
+          <motion.h2
             className="font-playfair text-4xl font-bold text-white text-center mb-12"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            {t('common.mission')}
+            Our Mission
           </motion.h2>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             {[
               { title: 'AI for Everyone', description: 'Making advanced AI accessible to every farmer, regardless of technical expertise' },

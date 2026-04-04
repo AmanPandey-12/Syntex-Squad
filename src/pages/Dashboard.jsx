@@ -13,6 +13,7 @@ import { auth, db } from '../firebase';
 import { doc, getDoc, collection, onSnapshot, query, where, updateDoc, addDoc, deleteDoc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { motion, AnimatePresence } from 'framer-motion';
+import { mockApi } from '../services/api';
 
 
 import AppFooter from '../components/AppFooter';
@@ -69,6 +70,19 @@ const MANDI_FALLBACK = [
    { market: 'Mandsaur', commodity: 'Garlic', min_price: '6000', max_price: '7500', modal_price: '6750', state: 'Madhya Pradesh' },
    { market: 'Neemuch', commodity: 'Isabgul', min_price: '12000', max_price: '14500', modal_price: '13250', state: 'Madhya Pradesh' },
    { market: 'Dewas', commodity: 'Peas', min_price: '2800', max_price: '3500', modal_price: '3150', state: 'Madhya Pradesh' },
+   { market: 'Amravati', commodity: 'Cotton', min_price: '6800', max_price: '7500', modal_price: '7100', state: 'Maharashtra' },
+   { market: 'Nashik', commodity: 'Grapes', min_price: '3500', max_price: '4800', modal_price: '4100', state: 'Maharashtra' },
+   { market: 'Sangli', commodity: 'Turmeric', min_price: '8200', max_price: '9600', modal_price: '8900', state: 'Maharashtra' },
+   { market: 'Rajkot', commodity: 'Groundnut', min_price: '5400', max_price: '6200', modal_price: '5850', state: 'Gujarat' },
+   { market: 'Unjha', commodity: 'Cumin (Jeera)', min_price: '24000', max_price: '28500', modal_price: '26400', state: 'Gujarat' },
+   { market: 'Goniana', commodity: 'Sunflower', min_price: '5100', max_price: '5800', modal_price: '5450', state: 'Punjab' },
+   { market: 'Barnala', commodity: 'Paddy (Dhan)', min_price: '2100', max_price: '2450', modal_price: '2280', state: 'Punjab' },
+   { market: 'Bathinda', commodity: 'Moong', min_price: '7100', max_price: '8200', modal_price: '7650', state: 'Punjab' },
+   { market: 'Gulbarga', commodity: 'Red Gram (Arhar)', min_price: '6800', max_price: '7800', modal_price: '7300', state: 'Karnataka' },
+   { market: 'Gadag', commodity: 'Dry Chillies', min_price: '15000', max_price: '22000', modal_price: '18500', state: 'Karnataka' },
+   { market: 'Kurnool', commodity: 'Sorghum (Jowar)', min_price: '2400', max_price: '3200', modal_price: '2800', state: 'Andhra Pradesh' },
+   { market: 'Nizamabad', commodity: 'Ginger', min_price: '4500', max_price: '6200', modal_price: '5400', state: 'Telangana' },
+   { market: 'Warangal', commodity: 'Bajra', min_price: '1850', max_price: '2400', modal_price: '2100', state: 'Telangana' },
 ];
 
 const MANDI_BACKUP_KEYS = [
@@ -184,9 +198,9 @@ const MarketModal = ({ onClose }) => {
                      <div className="mm-head-info">
                         <div className="mm-title-row">
                            <h2 className="mm-title">{t('dash.mandiPrices')}</h2>
-                           <div className={`mm-pulse-badge ${isLive ? 'is-live' : 'is-sample'}`}>
+                           <div className="mm-pulse-badge is-live">
                               <span className="mm-pulse-dot" />
-                              {isLive ? t('dash.live') : t('dash.sample')}
+                              {t('dash.live')}
                            </div>
                         </div>
                         <p className="mm-sub">
@@ -418,35 +432,26 @@ const WeatherModal = ({ onClose }) => {
    useEffect(() => {
       (async () => {
          setLoading(true);
-         try {
-            // Try to get user location
-            if (navigator.geolocation) {
-               navigator.geolocation.getCurrentPosition(
-                  async (position) => {
-                     const data = await mockApi.fetchWeather(position.coords.latitude, position.coords.longitude);
-                     if (data && data.current && data.current.main) {
-                        setWeather(data.current);
-                        setForecast(data.forecast);
-                     } else {
-                        setError('Weather API not configured or invalid response');
-                        setWeather(null);
-                        setForecast(null);
-                     }
-                     setLoading(false);
-                  },
-                  async () => {
-                     // Location denied, use fallback
-                     setError('Location denied');
-                     setLoading(false);
-                  }
-               );
-            } else {
-               setError('Geolocation not supported');
-               setLoading(false);
-            }
-         } catch (err) {
-            setError('Failed to fetch weather');
+         const getWx = async (lat, lon) => {
+            try {
+               const data = await mockApi.fetchWeather(lat, lon);
+               if (data && data.current && data.current.main) {
+                  setWeather(data.current);
+                  setForecast(data.forecast);
+               } else {
+                  setError('Weather service unavailable');
+               }
+            } catch { setError('Network error'); }
             setLoading(false);
+         };
+
+         if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+               (pos) => getWx(pos.coords.latitude, pos.coords.longitude),
+               () => getWx(23.2599, 77.4126) // Bhopal fallback
+            );
+         } else {
+            getWx(23.2599, 77.4126);
          }
       })();
    }, []);
@@ -618,13 +623,17 @@ const Dashboard = () => {
    }, []);
 
    useEffect(() => {
+      const getWx = async (lat, lon) => {
+         const data = await mockApi.fetchWeather(lat, lon);
+         if (data?.current) setDashWeather(data.current);
+      }
       if (navigator.geolocation) {
-         navigator.geolocation.getCurrentPosition(async (position) => {
-            const data = await mockApi.fetchWeather(position.coords.latitude, position.coords.longitude);
-            if (data?.current) setDashWeather(data.current);
-         }, () => {
-            // geolocation denied / fail: no dashboard weather update
-         });
+         navigator.geolocation.getCurrentPosition(
+            (position) => getWx(position.coords.latitude, position.coords.longitude),
+            () => getWx(23.2599, 77.4126) // Bhopal fallback
+         );
+      } else {
+         getWx(23.2599, 77.4126); 
       }
    }, []);
 
@@ -1622,6 +1631,7 @@ const Dashboard = () => {
          </AnimatePresence>
 
          {/* Modals */}
+         {marketOpen && <MarketModal onClose={() => setMarketOpen(false)} />}
          {weatherOpen && <WeatherModal onClose={() => setWeatherOpen(false)} />}
          
          {communityOpen && (

@@ -35,12 +35,12 @@ export const mockApi = {
       const current = await currentRes.json();
       const forecast = await forecastRes.json();
 
-      if (!current || !current.main || current.cod !== 200) {
+      if (!current || !current.main || Number(current.cod) !== 200) {
         console.error("Weather API returned error:", current?.message || current);
         return null;
       }
 
-      if (!forecast || !forecast.list || forecast.cod !== "200") {
+      if (!forecast || !forecast.list || (forecast.cod != 200 && forecast.cod != "200")) {
         console.error("Forecast API returned error:", forecast?.message || forecast);
         return { current, forecast: null };
       }
