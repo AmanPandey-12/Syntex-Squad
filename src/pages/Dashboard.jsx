@@ -4,12 +4,12 @@ import {
    Droplets, Wind, CloudLightning, CloudSun, ThermometerSun,
    Search, LogOut, Sprout, Bell, Settings, LayoutDashboard,
    PackageSearch, Menu, User, Users, PhoneOff, PhoneCall, Speaker, Calculator, Square,
-   RefreshCw, Award
+   RefreshCw, Award, History, Save, Trash2
 } from 'lucide-react';
 import { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { auth, db } from '../firebase';
-import { doc, getDoc, collection, onSnapshot, query, where, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, onSnapshot, query, where, updateDoc, addDoc, deleteDoc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { motion, AnimatePresence } from 'framer-motion';
 import { mockApi } from '../services/api';
@@ -577,6 +577,9 @@ const Dashboard = () => {
    const [authLoading, setAuthLoading] = useState(true);
    const [userProfile, setUserProfile] = useState(null);
    const [chatOpen, setChatOpen] = useState(false);
+   const [savedChats, setSavedChats] = useState([]);
+   const [showingHistory, setShowingHistory] = useState(false);
+   const [savingChat, setSavingChat] = useState(false);
    const [marketOpen, setMarketOpen] = useState(false);
    const [calendarOpen, setCalendarOpen] = useState(false);
    const [weatherOpen, setWeatherOpen] = useState(false);
@@ -587,6 +590,7 @@ const Dashboard = () => {
    const [chatInput, setChatInput] = useState('');
    const [chatLoading, setChatLoading] = useState(false);
    const [speakingIdx, setSpeakingIdx] = useState(null);
+   const [isPaused, setIsPaused] = useState(false);
    const [incomingCall, setIncomingCall] = useState(null);
    const chatEndRef = useRef(null);
    const navigate = useNavigate();
@@ -625,6 +629,7 @@ const Dashboard = () => {
    useEffect(() => {
       let unsubCrops = () => { };
       let unsubSchemes = () => { };
+      let unsubChats = () => { };
       if (!auth) { navigate('/login'); return; }
       const unsubAuth = auth.onAuthStateChanged(async user => {
          if (user) {
@@ -639,16 +644,21 @@ const Dashboard = () => {
                }, (error) => {
                   console.error("Crops listener error:", error);
                   if (error.code === 'permission-denied') {
-                     console.warn("Permission denied for crops. User may not be authenticated.");
+                     console.warn("Permission denied for crops.");
                      navigate('/login');
                   }
                   setLoading(false); setAuthLoading(false);
                });
+               const chatQ = query(collection(db, 'chats'), where('userId', '==', user.uid));
+               unsubChats = onSnapshot(chatQ, snap => {
+                  const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                  setSavedChats(list.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)));
+               }, (error) => {});
 
             } catch { setLoading(false); setAuthLoading(false); }
          } else { setAuthLoading(false); navigate('/login'); }
       });
-      return () => { unsubAuth(); unsubCrops(); };
+      return () => { unsubAuth(); unsubCrops(); unsubChats(); unsubSchemes(); };
    }, [navigate]);
 
    useEffect(() => {
@@ -743,6 +753,28 @@ const Dashboard = () => {
       } catch {
          setChatMessages(p => [...p, { role: 'bot', text: 'Unable to connect. Please try again.' }]);
       } finally { setChatLoading(false); }
+   };
+
+   const handleSaveChat = async () => {
+      if (chatMessages.length <= 1) return; // Only bot greeting or empty
+      if (!auth.currentUser) return;
+      setSavingChat(true);
+      try {
+         const firstUserMsg = chatMessages.find(m => m.role === 'user')?.text || 'Farm Chat';
+         let generatedTitle = firstUserMsg.length > 28 ? firstUserMsg.substring(0, 28) + '...' : firstUserMsg;
+         
+         await addDoc(collection(db, 'chats'), {
+            userId: auth.currentUser.uid,
+            title: generatedTitle,
+            messages: chatMessages,
+            createdAt: new Date().toISOString()
+         });
+         alert('Chat history saved successfully!');
+      } catch (e) {
+         console.error('Error saving chat:', e);
+         alert('Failed to save chat.');
+      }
+      setSavingChat(false);
    };
 
    if (authLoading) return (
@@ -1208,6 +1240,14 @@ const Dashboard = () => {
           color: var(--ink-2); border-bottom-left-radius: 4px;
           box-shadow: var(--sh-1); width: 100%;
           line-height: 1.6;
+          position: relative;
+          padding-right: 48px !important; /* Fixed padding for audio button */
+        }
+        .d-btn-audio-wrapper {
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          z-index: 100;
         }
         .d-cbubble--bot strong { display: block; margin-top: 10px; margin-bottom: 4px; color: var(--ink); font-size: 14px; }
         .d-cbubble--bot div { margin-bottom: 4px; }
@@ -1400,48 +1440,122 @@ const Dashboard = () => {
                               <p className="d-chat-ready"><span className="d-chat-rdot" /> Ready</p>
                            </div>
                         </div>
-                        <button className="d-btn-cx" onClick={() => setChatOpen(false)}><X size={15} /></button>
+                        <div className="flex items-center gap-2">
+                           <button className="d-btn-cx" onClick={() => setShowingHistory(!showingHistory)} title="History">
+                              <History size={15} color={showingHistory ? '#7dd9a3' : 'currentColor'} />
+                           </button>
+                           <button className="d-btn-cx" onClick={handleSaveChat} disabled={savingChat} title="Save current chat">
+                              <Save size={15} className={savingChat ? "animate-pulse" : ""} />
+                           </button>
+                           <button className="d-btn-cx" onClick={() => setChatOpen(false)}><X size={15} /></button>
+                        </div>
                      </div>
-                     <div className="d-chat-msgs">
+                     
+                     {showingHistory ? (
+                        <div className="d-chat-msgs bg-gray-50 flex-1 p-5">
+                           <div className="flex justify-between items-center mb-4 border-b border-gray-200 pb-3">
+                              <h3 className="font-bold text-gray-800 text-lg">Saved Conversations</h3>
+                              <button onClick={() => setShowingHistory(false)} className="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full border border-green-200 hover:bg-green-100 transition">Back to Chat</button>
+                           </div>
+                           {savedChats.length === 0 ? (
+                              <div className="text-center py-10 text-gray-500 text-sm bg-white rounded-xl border border-gray-100">
+                                 <History className="mx-auto mb-2 opacity-50" size={32} />
+                                 <p>No saved chats yet.</p>
+                                 <p className="text-xs mt-1 opacity-70">Save your conversation to see it here.</p>
+                              </div>
+                           ) : (
+                              <div className="flex flex-col gap-3">
+                                 {savedChats.map(sc => (
+                                    <div key={sc.id} className="p-4 bg-white border border-gray-200 rounded-xl cursor-pointer hover:border-green-400 hover:shadow-md transition shadow-sm relative group"
+                                         onClick={() => { setChatMessages(sc.messages); setShowingHistory(false); }}>
+                                       <div className="flex justify-between items-start gap-2">
+                                          <p className="font-bold text-gray-800 text-sm leading-tight flex-1">{sc.title}</p>
+                                          <button onClick={(e) => { e.stopPropagation(); deleteDoc(doc(db, 'chats', sc.id)); }} className="text-gray-300 hover:text-red-500 bg-red-50/0 hover:bg-red-50 p-1.5 rounded-lg transition opacity-0 group-hover:opacity-100"><Trash2 size={15}/></button>
+                                       </div>
+                                       <div className="flex justify-between items-center mt-3">
+                                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{new Date(sc.createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</p>
+                                          <p className="text-[10px] text-green-700 bg-green-50 font-bold px-2 py-0.5 rounded-md border border-green-100">{sc.messages.length} msgs</p>
+                                       </div>
+                                    </div>
+                                 ))}
+                              </div>
+                           )}
+                        </div>
+                     ) : (
+                        <>
+                           <div className="d-chat-msgs">
                         {chatMessages.map((msg, i) => (
                            <div key={i} className={`d-cmsg d-cmsg--${msg.role}`}>
-                              <div className={`d-cbubble d-cbubble--${msg.role} ${msg.role === 'bot' ? 'flex items-center justify-between' : ''}`}>
-                                 <div className={msg.role === 'bot' ? 'flex-1' : ''}>
+                              <div className={`d-cbubble d-cbubble--${msg.role} ${msg.role === 'bot' ? 'pr-10' : ''}`}>
+                                 <div className={msg.role === 'bot' ? 'flex-1 text-left' : ''}>
                                     {renderFormattedText(msg.text)}
                                  </div>
                                  {msg.role === 'bot' && (
-                                    <div className="flex flex-col gap-2">
+                                    <div className="d-btn-audio-wrapper" style={{ position: 'absolute', top: '8px', right: '8px', zIndex: 20 }}>
                                        <button
-                                          className={`ml-2 p-1 rounded-full transition-colors ${speakingIdx === i ? 'text-red-500 bg-red-50' : 'text-gray-400 hover:text-krishi-600'}`}
-                                          onClick={() => {
-                                             if (!('speechSynthesis' in window)) return;
+                                          className={`p-2 rounded-full shadow-sm transition-all ${speakingIdx === i ? 'text-red-500 bg-red-50 ring-2 ring-red-200' : 'text-gray-400 bg-white hover:bg-gray-50 border border-gray-100'}`}
+                                          style={{ pointerEvents: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                          onClick={(e) => {
+                                             e.preventDefault();
+                                             e.stopPropagation();
+                                             if (!window.speechSynthesis) return;
 
+                                             // If we are currently on the SAME message
                                              if (speakingIdx === i) {
-                                                window.speechSynthesis.cancel();
-                                                setSpeakingIdx(null);
+                                                if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+                                                   window.speechSynthesis.pause();
+                                                   setIsPaused(true);
+                                                } else if (window.speechSynthesis.paused) {
+                                                   window.speechSynthesis.resume();
+                                                   setIsPaused(false);
+                                                } else {
+                                                   // Already finished or something went wrong? Reset.
+                                                   window.speechSynthesis.cancel();
+                                                   setSpeakingIdx(null);
+                                                   setIsPaused(false);
+                                                }
                                                 return;
                                              }
 
+                                             // New message or restarting
                                              window.speechSynthesis.cancel();
-                                             const utterance = new SpeechSynthesisUtterance(msg.text);
-                                             utterance.lang = 'hi-IN';
-                                             utterance.rate = 0.5; // SLOWER as requested
-                                             utterance.pitch = 1.0;
-                                             utterance.volume = 0.9;
+                                             setIsPaused(false);
+                                             
+                                             // Use a small timeout to let the browser clear the queue
+                                             setTimeout(() => {
+                                                const textToSpeak = msg.text.replace(/\*\*/g, ''); // Clear markdown bold
+                                                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                                                utterance.lang = 'hi-IN';
+                                                utterance.rate = 0.9; // Adjusted for better clarity
+                                                utterance.pitch = 1.0;
+                                                utterance.volume = 1.0;
 
-                                             const v = window.speechSynthesis.getVoices();
-                                             const targetVoice = v.find(v => v.lang === 'hi-IN') || v.find(v => v.lang === 'en-IN');
-                                             if (targetVoice) utterance.voice = targetVoice;
+                                                const voices = window.speechSynthesis.getVoices();
+                                                const hindiVoice = voices.find(v => v.lang.includes('hi') || v.lang.includes('HI'));
+                                                if (hindiVoice) utterance.voice = hindiVoice;
 
-                                             utterance.onend = () => setSpeakingIdx(null);
-                                             utterance.onerror = () => setSpeakingIdx(null);
+                                                utterance.onstart = () => {
+                                                   setSpeakingIdx(i);
+                                                   setIsPaused(false);
+                                                };
+                                                utterance.onend = () => {
+                                                   setSpeakingIdx(null);
+                                                   setIsPaused(false);
+                                                };
+                                                utterance.onerror = (err) => {
+                                                   console.error('Speech error:', err);
+                                                   setSpeakingIdx(null);
+                                                   setIsPaused(false);
+                                                };
 
-                                             setSpeakingIdx(i);
-                                             window.speechSynthesis.speak(utterance);
+                                                window.speechSynthesis.speak(utterance);
+                                             }, 100);
                                           }}
-                                          title={speakingIdx === i ? "Stop" : "Suniye (Listen)"}
+                                          title={speakingIdx === i ? (isPaused ? "Resume" : "Pause") : "Suniye (Listen)"}
                                        >
-                                          {speakingIdx === i ? <Square size={16} fill="currentColor" /> : <Speaker size={16} />}
+                                          {speakingIdx === i ? (
+                                             isPaused ? <Speaker size={16} className="text-amber-500 animate-pulse" /> : <Square size={16} fill="currentColor" className="text-red-500" />
+                                          ) : <Speaker size={16} />}
                                        </button>
                                     </div>
                                  )}
@@ -1454,27 +1568,29 @@ const Dashboard = () => {
                            </div>
                         )}
                         <div ref={chatEndRef} />
-                     </div>
-                     <div className="d-chat-chips">
-                        {Object.keys(quickQA).map(q => (
-                           <button key={q} className="d-chip" onClick={() => handleSend(null, q)}>{q}</button>
-                        ))}
-                     </div>
-                     <form className="d-chat-form" onSubmit={handleSend}>
-                        <div className="flex items-center gap-2 flex-1">
-                           <input className="d-chat-inp flex-1" placeholder="Hindi ya English mein poochiye..." value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSend()} />
-                           <MicButton
-                              size="sm"
-                              variant="light"
-                              tooltip="Bolke poochiye"
-                              onResult={(transcript) => {
-                                 setChatInput(transcript);
-                                 setTimeout(() => handleSend(null, transcript), 300);
-                              }}
-                           />
-                        </div>
-                        <button type="submit" className="d-chat-go"><Send size={15} /></button>
-                     </form>
+                           </div>
+                           <div className="d-chat-chips">
+                              {Object.keys(quickQA).map(q => (
+                                 <button key={q} className="d-chip" onClick={() => handleSend(null, q)}>{q}</button>
+                              ))}
+                           </div>
+                           <form className="d-chat-form" onSubmit={handleSend}>
+                              <div className="flex items-center gap-2 flex-1">
+                                 <input className="d-chat-inp flex-1" placeholder="Hindi ya English mein poochiye..." value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSend()} />
+                                 <MicButton
+                                    size="sm"
+                                    variant="light"
+                                    tooltip="Bolke poochiye"
+                                    onResult={(transcript) => {
+                                       setChatInput(transcript);
+                                       setTimeout(() => handleSend(null, transcript), 300);
+                                    }}
+                                 />
+                              </div>
+                              <button type="submit" className="d-chat-go"><Send size={15} /></button>
+                           </form>
+                        </>
+                     )}
                   </motion.div>
                </div>
             )}
