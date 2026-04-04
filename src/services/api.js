@@ -47,11 +47,15 @@ export const mockApi = {
 
       return { current, forecast };
     } catch (error) {
-      console.error("Weather API Error:", error);
       return null;
     }
-  },  predictDisease: async (base64Image, targetLanguage = 'en') => {
+  },
+  predictDisease: async (base64Image, targetLanguage = 'en') => {
     try {
+      if (!OPENROUTER_API_KEY || OPENROUTER_API_KEY === 'your_openrouter_api_key_here') {
+        throw new Error("KEY_MISSING: OpenRouter API Key is missing or not set in .env file. Please check your environment variables.");
+      }
+
       const response = await axios.post(
         "https://openrouter.ai/api/v1/chat/completions",
         {
@@ -69,7 +73,7 @@ export const mockApi = {
               SCORING RULES:
               1. IF HEALTHY: 'diag' must be "Healthy", 'score' 95-100.
               2. IF DISEASED: accurately identify the issue and 'score' reflecting affected area:
-                 - Minor: 85-94 | Moderate: 60-84 | High: 40-59 | Critical: 0-39.
+              - Minor: 85-94 | Moderate: 60-84 | High: 40-59 | Critical: 0-39.
               
               JSON Structure:
               {
@@ -98,14 +102,18 @@ export const mockApi = {
           max_tokens: 2048
         },
         {
-          headers: { "Authorization": `Bearer ${OPENROUTER_API_KEY}`, "Content-Type": "application/json", "X-Title": "KrishiAI" },
-          timeout: 60000
+          headers: { 
+            "Authorization": `Bearer ${OPENROUTER_API_KEY}`, 
+            "Content-Type": "application/json", 
+            "X-Title": "KrishiAI Diagnostic" 
+          },
+          timeout: 90000 // Increased for slower connections
         }
       );
 
       const content = response.data.choices[0].message.content;
       const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error("PARSE_ERROR: No JSON found");
+      if (!jsonMatch) throw new Error("PARSE_ERROR: No valid JSON returned from model");
       
       const rawJson = JSON.parse(jsonMatch[0]);
       
@@ -165,10 +173,22 @@ export const mockApi = {
 
       return finalResult;
     } catch (error) {
-      console.error("AI Error:", error.message);
-      const fallbackData = { summary: "Connection issue. Please check internet.", solution: [], prevention: [] };
+      console.error("Diagnostic AI Error:", error.message);
+      
+      let friendlyError = "Connection issue. Please check your internet.";
+      if (error.message.includes("KEY_MISSING")) {
+        friendlyError = "VITE_OPENROUTER_API_KEY is missing. Check your .env file and restart the server.";
+      } else if (error.response?.status === 401) {
+        friendlyError = "Invalid API Key. Please check your OpenRouter key.";
+      } else if (error.response?.status === 402) {
+        friendlyError = "OpenRouter credits exhausted. Please top up your account.";
+      } else if (error.code === 'ECONNABORTED') {
+        friendlyError = "Scan took too long. Checking server status...";
+      }
+
+      const fallbackData = { summary: friendlyError, solution: [], prevention: [] };
       return {
-        "cropName": "Unknown", "diagnosis": "Offline", "severity": "Low", "confidence": 100, "healthScore": 100, "status": "Healthy",
+        "cropName": "Error", "diagnosis": "Offline", "severity": "Low", "confidence": 0, "healthScore": 0, "status": "At Risk",
         "en": fallbackData, "hi": fallbackData, "ta": fallbackData, "te": fallbackData, "mr": fallbackData, "bn": fallbackData
       };
     }
