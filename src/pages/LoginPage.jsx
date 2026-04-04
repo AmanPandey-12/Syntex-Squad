@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Leaf, Mail, Lock, ArrowRight, User, Shield,
+  Leaf, Mail, Lock, ArrowRight, X, User, Shield,
   Eye, EyeOff, Sparkles, TrendingUp, Users
 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -9,7 +9,10 @@ import { auth, db, googleProvider } from '../firebase';
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithPopup
+  signInWithPopup,
+  onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 
@@ -67,6 +70,29 @@ const LoginPage = () => {
     }
   };
 
+  useEffect(() => {
+    let unsub = () => {};
+    const initAuth = async () => {
+      if (!auth) return;
+      try {
+        await setPersistence(auth, browserLocalPersistence);
+      } catch (error) {
+        console.error("Auth persistence error:", error);
+      }
+      
+      if (auth) {
+        unsub = onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            await redirectAfterAuth(user);
+          }
+        });
+      }
+    };
+    
+    initAuth();
+    return () => unsub();
+  }, [navigate]);
+
   const handleEmailAuth = async e => {
     e.preventDefault();
     if (!auth || !db) return;
@@ -107,12 +133,22 @@ const LoginPage = () => {
     <div className="min-h-screen bg-white flex flex-col lg:flex-row-reverse font-sans">
       {/* RIGHT SIDE - Auth Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10 lg:p-16 relative">
-        {/* Mobile Logo */}
+        {/* Close Button - Top Right */}
+        <button 
+          type="button"
+          onClick={() => navigate('/')}
+          className="absolute top-6 right-6 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:scale-105 transition-all z-10 bg-slate-50 hover:bg-slate-100 border border-slate-200 p-2.5 rounded-xl shadow-sm"
+          aria-label="Close"
+        >
+          <X size={20} strokeWidth={2.5} />
+        </button>
+
+        {/* Mobile Logo - Shifted Left */}
         <div className="absolute top-6 left-6 lg:hidden flex items-center gap-2">
-          <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
-            <Leaf size={20} className="text-white" strokeWidth={2.5} />
+          <div className="w-9 h-9 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+            <Leaf size={18} className="text-white" strokeWidth={2.5} />
           </div>
-          <span className="text-xl font-bold text-slate-900 tracking-tight">
+          <span className="text-lg font-bold text-slate-900 tracking-tight">
             Krishi<span className="text-green-600">AI</span>
           </span>
         </div>
@@ -124,7 +160,7 @@ const LoginPage = () => {
           className="w-full max-w-md mt-6 lg:mt-0"
         >
           {/* Header */}
-          <div className="mb-8">
+          <div className="mb-8 mt-12 sm:mt-0">
             <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-3 tracking-tight">
               {authMode === 'login' ? 'Welcome back' : 'Create account'}
             </h1>

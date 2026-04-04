@@ -23,25 +23,28 @@ if (missingKeys.length > 0) {
 }
 
 // Initialize Firebase safely
-let app;
-let auth;
-let db;
-let googleProvider;
+let app = null;
+let auth = null;
+let db = null;
+let googleProvider = null;
 let analytics = null;
 
-
 try {
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app);
-  googleProvider = new GoogleAuthProvider();
+  if (import.meta.env.VITE_FIREBASE_API_KEY) {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    googleProvider = new GoogleAuthProvider();
 
-  // Analytics is optional and only runs if supported
-  isSupported().then(yes => {
-    if (yes && firebaseConfig.measurementId) {
-      analytics = getAnalytics(app);
-    }
-  }).catch(err => console.debug("Analytics not supported"));
+    // Analytics is optional and only runs if supported
+    isSupported().then(yes => {
+      if (yes && firebaseConfig.measurementId && app) {
+        analytics = getAnalytics(app);
+      }
+    }).catch(err => console.debug("Analytics not supported"));
+  } else {
+    console.warn("Firebase was not initialized: VITE_FIREBASE_API_KEY is missing.");
+  }
 } catch (error) {
   console.error("Firebase initialization failed:", error);
 }
