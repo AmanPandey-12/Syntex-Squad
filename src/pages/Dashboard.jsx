@@ -1,10 +1,10 @@
 import {
    Leaf, X, TrendingUp, Scan, CloudRain, Sun,
-   MapPin, Calendar, Send, Bot, ArrowRight, Activity, ChevronRight,
+   MapPin, Send, Bot, ArrowRight, Activity, ChevronRight,
    Droplets, Wind, CloudLightning, CloudSun, ThermometerSun,
    Search, LogOut, Sprout, Bell, Settings, LayoutDashboard,
    PackageSearch, Menu, User, Users, PhoneOff, PhoneCall, Speaker, Calculator, Square,
-   RefreshCw
+   RefreshCw, Award
 } from 'lucide-react';
 import { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
@@ -13,7 +13,6 @@ import { doc, getDoc, collection, onSnapshot, query, where, updateDoc } from 'fi
 import { signOut } from 'firebase/auth';
 import { motion, AnimatePresence } from 'framer-motion';
 import { mockApi } from '../services/api';
-import { cropCalendarData } from '../data/cropCalendar';
 import FarmerCommunity from '../components/FarmerCommunity';
 import AppFooter from '../components/AppFooter';
 import MicButton from '../components/MicButton';
@@ -327,31 +326,7 @@ const MarketModal = ({ onClose }) => {
 /* ─────────────────────────────────────────────────────────────
    CALENDAR MODAL
 ───────────────────────────────────────────────────────────── */
-const CalendarModal = ({ onClose }) => {
-   const seasons = cropCalendarData || [
-      { season: 'Kharif', period: 'Jun – Oct', accent: '#2e7d4f', crops: [{ name: 'Rice' }, { name: 'Cotton' }, { name: 'Maize' }, { name: 'Soybean' }], description: 'Monsoon season crops sown with the rains.' },
-      { season: 'Rabi', period: 'Nov – Apr', accent: '#1e6ea6', crops: [{ name: 'Wheat' }, { name: 'Mustard' }, { name: 'Chickpea' }, { name: 'Barley' }], description: 'Cool-season crops grown in winter.' },
-      { season: 'Zaid', period: 'Mar – Jun', accent: '#b8651a', crops: [{ name: 'Watermelon' }, { name: 'Cucumber' }, { name: 'Pumpkin' }], description: 'Short-duration summer crops.' },
-   ];
-   return (
-      <Modal title="Crop Calendar" subtitle="Seasonal planting & harvest guide" onClose={onClose} wide>
-         <div className="d-cal-grid">
-            {seasons.map((s, i) => (
-               <div key={i} className="d-cal-card" style={{ '--acc': s.accent }}>
-                  <div className="d-cal-top">
-                     <span className="d-cal-season">{s.season}</span>
-                     <span className="d-cal-period">{s.period}</span>
-                  </div>
-                  <div className="d-cal-crops">
-                     {s.crops.map((c, j) => <span key={j} className="d-cal-pill">{c.name}</span>)}
-                  </div>
-                  <p className="d-cal-desc">{s.description}</p>
-               </div>
-            ))}
-         </div>
-      </Modal>
-   );
-};
+
 
 /* ─────────────────────────────────────────────────────────────
    Weather helpers
@@ -649,6 +624,7 @@ const Dashboard = () => {
 
    useEffect(() => {
       let unsubCrops = () => { };
+      let unsubSchemes = () => { };
       if (!auth) { navigate('/login'); return; }
       const unsubAuth = auth.onAuthStateChanged(async user => {
          if (user) {
@@ -668,6 +644,7 @@ const Dashboard = () => {
                   }
                   setLoading(false); setAuthLoading(false);
                });
+
             } catch { setLoading(false); setAuthLoading(false); }
          } else { setAuthLoading(false); navigate('/login'); }
       });
@@ -801,7 +778,7 @@ const Dashboard = () => {
    return (
       <>
          <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Outfit:wght@300;400;500;600;700;800;900&family=Dancing+Script:wght@700&display=swap');
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -818,7 +795,7 @@ const Dashboard = () => {
           --green:     #2e7d4f;
           --green-2:   #3fa066;
           --green-bg:  #eaf4ee;
-          --green-mid: #a8d4b5;
+          --green-mid: #a3e635;
           --amber:     #b8651a;
           --amber-bg:  #fef3e7;
           --rose:      #c0392b;
@@ -841,7 +818,7 @@ const Dashboard = () => {
           .d-tiles { grid-template-columns: repeat(4,1fr) !important; }
         }
 
-        body { background: var(--bg); font-family: 'Nunito', sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+        body { background: var(--bg); font-family: 'Outfit', 'Nunito', sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
 
 
         /* ══════════════════════════════════════════
@@ -856,7 +833,8 @@ const Dashboard = () => {
 
         /* ── HERO BANNER ── */
         .d-hero {
-          background: linear-gradient(135deg, #152b1e 0%, #1e4a30 45%, #162f22 100%);
+          background: linear-gradient(rgba(21,43,30,0.8), rgba(30,74,48,0.6)), url('/hero_bg.png');
+          background-size: cover; background-position: center;
           border-radius: var(--r-xl); padding: 36px 40px; margin-bottom: 20px;
           position: relative; overflow: hidden;
           box-shadow: 0 10px 48px rgba(18,40,26,.22), 0 2px 8px rgba(18,40,26,.12);
@@ -883,23 +861,23 @@ const Dashboard = () => {
           display: flex; align-items: center; gap: 6px;
         }
         .d-hero-name {
-          font-family: 'Playfair Display', serif;
-          font-size: 32px; font-weight: 800; color: #fff; line-height: 1.15; margin-bottom: 12px;
-          word-break: break-word;
+          font-family: 'Outfit', sans-serif;
+          font-size: 36px; font-weight: 800; color: #fff; line-height: 1.15; margin-bottom: 12px;
+          word-break: break-word; text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         @media(max-width:560px) { .d-hero-name { font-size: 24px; } }
-        .d-hero-name em { font-style: italic; color: #7dd9a3; }
+        .d-hero-name em { font-family: 'Dancing Script', cursive; font-style: normal; color: var(--green-mid); font-size: 1.15em; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4)); }
         .d-hero-badge {
           display: inline-flex; align-items: center; gap: 7px; padding: 5px 14px;
           background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
           border-radius: 100px; font-size: 12px; color: rgba(255,255,255,.48); font-weight: 600;
         }
-        .d-hero-bdot { width: 7px; height: 7px; border-radius: 50%; background: #7dd9a3; }
+        .d-hero-bdot { width: 7px; height: 7px; border-radius: 50%; background: var(--green-mid); box-shadow: 0 0 8px var(--green-mid); }
         .d-hero-kpis { display: flex; gap: 32px; }
         @media(max-width:560px) { .d-hero-kpis { display: none; } }
         .d-kpi { text-align: right; }
-        .d-kpi-val { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: #fff; line-height: 1; }
-        .d-kpi-val--g { color: #7dd9a3; }
+        .d-kpi-val { font-family: 'Outfit', sans-serif; font-size: 32px; font-weight: 800; color: #fff; line-height: 1; }
+        .d-kpi-val--g { color: var(--green-mid); }
         .d-kpi-val--a { color: #f5c07a; }
         .d-kpi-val--r { color: #f5a09a; }
         .d-kpi-label { font-size: 10px; color: rgba(255,255,255,.35); font-weight: 700; margin-top: 5px; letter-spacing: .1em; text-transform: uppercase; }
@@ -917,7 +895,7 @@ const Dashboard = () => {
         .d-tile::before { content: ''; position: absolute; inset-y: 0; left: 0; width: 4px; background: var(--tc,var(--green)); border-radius: var(--r-lg) 0 0 var(--r-lg); }
         .d-tile-icon { width: 38px; height: 38px; border-radius: var(--r-sm); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; background: var(--tb,var(--green-bg)); color: var(--tc,var(--green)); }
         .d-tile-label { font-size: 10.5px; font-weight: 700; color: var(--ink-3); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 5px; }
-        .d-tile-value { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--ink); line-height: 1; }
+        .d-tile-value { font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 700; color: var(--ink); line-height: 1; }
         .d-tile-sub { font-size: 11px; color: var(--ink-4); font-weight: 500; margin-top: 6px; line-height: 1.45; }
 
         /* ── BODY GRID ── */
@@ -925,7 +903,7 @@ const Dashboard = () => {
         @media(max-width:960px) { .d-body { grid-template-columns: 1fr; } }
 
         .d-sec-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-        .d-sec-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--ink); }
+        .d-sec-title { font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 700; color: var(--ink); }
         .d-sec-link { font-size: 12.5px; font-weight: 700; color: var(--green); text-decoration: none; display: flex; align-items: center; gap: 4px; }
         .d-sec-link:hover { color: var(--green-2); }
 
@@ -958,7 +936,7 @@ const Dashboard = () => {
         
         .d-crop-r { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
         .d-crop-health-label { font-size: 10px; font-weight: 800; color: var(--ink-4); letter-spacing: 0.1em; text-transform: uppercase; }
-        .d-crop-score { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 800; color: var(--ink); line-height: 1; }
+        .d-crop-score { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; color: var(--ink); line-height: 1; }
         
         .d-empty { padding: 60px 20px; text-align: center; background: var(--surface); border: 1px dashed var(--border-2); border-radius: var(--r-xl); }
         .d-empty svg { color: var(--green-mid); margin: 0 auto 16px; opacity: 0.5; }
@@ -996,7 +974,7 @@ const Dashboard = () => {
         .d-modal::-webkit-scrollbar { display: none; }
         .d-modal--wide { max-width: 680px; }
         .d-modal-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px; }
-        .d-modal-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 800; color: var(--ink); }
+        .d-modal-title { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: var(--ink); }
         .d-modal-sub { font-size: 12px; color: var(--ink-3); margin-top: 3px; font-weight: 500; }
         .d-modal-close { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-sm); cursor: pointer; color: var(--ink-3); padding: 7px; display: flex; align-items: center; }
         .d-modal-close:hover { color: var(--ink); background: var(--border); }
@@ -1022,7 +1000,7 @@ const Dashboard = () => {
           background-image: radial-gradient(circle at 10% 20%, rgba(255,255,255,.08) 0%, transparent 60%);
         }
         .mm-head-content { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; }
-        .mm-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+        .mm-title { font-family: 'Outfit', sans-serif; font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 4px; }
         .mm-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 2px; }
         
         .mm-pulse-badge {
@@ -1099,12 +1077,12 @@ const Dashboard = () => {
         .mm-card-icon.is-indigo { background: #f0f4ff; color: #4f46e5; }
         
         .mm-card-info { min-width: 0; }
-        .mm-card-commodity { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 800; color: #1a2e14; margin-bottom: 2px; }
+        .mm-card-commodity { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: #1a2e14; margin-bottom: 2px; }
         .mm-card-location { font-size: 11px; font-weight: 600; color: #8ba58b; display: flex; align-items: center; gap: 5px; }
         
         .mm-card-price-stack { text-align: right; }
         .mm-card-currency { font-size: 13px; font-weight: 800; color: #94a3b8; margin-right: 2px; }
-        .mm-card-price { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 800; color: #1e293b; }
+        .mm-card-price { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; color: #1e293b; }
         .mm-card-price.is-high { color: #b45309; }
         .mm-card-price.is-mid { color: #059669; }
         .mm-card-unit { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; display: block; margin-top: -2px; }
@@ -1129,17 +1107,58 @@ const Dashboard = () => {
         .mm-nf-sub { font-size: 12px; color: #a0b8a0; max-width: 220px; margin: 0 auto; line-height: 1.5; }
         
         .animate-spin { animation: mm-spin 1.5s linear infinite; }
-        .mm-row-modal { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; white-space: nowrap; text-align: right; min-width: 72px; }
+        .mm-row-modal { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 700; white-space: nowrap; text-align: right; min-width: 72px; }
         .mm-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 20px; gap: 8px; color: var(--ink-3); font-size: 13px; font-weight: 600; }
         .mm-spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 8px; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .mm-footer { padding: 10px 16px; border-top: 1px solid var(--border); font-size: 11px; color: var(--ink-4); font-weight: 600; flex-shrink: 0; text-align: center; background: var(--surface-2); }
 
-        /* Calendar */
+                 /* Schemes section */
+         .d-schemes-row { margin-bottom: 28px; }
+         .d-schemes-scroll { display: flex; gap: 14px; overflow-x: auto; padding: 4px 4px 20px; margin: 0 -4px; scroll-snap-type: x mandatory; }
+         .d-schemes-scroll::-webkit-scrollbar { display: none; }
+         .d-scheme-card {
+           flex: 0 0 280px; scroll-snap-align: start; background: #fff;
+           border: 1px solid var(--border); border-radius: 20px; padding: 18px;
+           box-shadow: var(--sh-1); cursor: pointer; transition: all .2s;
+         }
+         .d-scheme-card:hover { transform: translateY(-3px); box-shadow: var(--sh-2); border-color: var(--green-mid); }
+         .d-scheme-icon { width: 40px; height: 40px; border-radius: 12px; background: #fff5e6; color: #d97706; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+         .d-scheme-name { font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+         .d-scheme-cat { font-size: 11px; font-weight: 700; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+         .d-scheme-badge { font-size: 9px; font-weight: 900; background: #eaf4ee; color: #2e7d4f; padding: 3px 8px; border-radius: 6px; float: right; }
+
+         /* All Schemes Catalog Modal */
+         .d-cat-modal { background: #fdfefd; border-radius: 28px; width: 100%; max-width: 800px; height: 85dvh; display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--sh-4); }
+         .d-cat-top { padding: 32px; background: linear-gradient(135deg, #152b1e, #1e4a30); color: #fff; flex-shrink: 0; }
+         .d-cat-title { font-family: 'Outfit', sans-serif; font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+         .d-cat-sub { font-size: 14px; opacity: .7; }
+         .d-cat-body { flex: 1; overflow-y: auto; padding: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+         @media(max-width:600px) { .d-cat-body { grid-template-columns: 1fr; padding: 20px; } .d-cat-top { padding: 24px; } }
+         .d-cat-item { background: #fff; border: 1px solid var(--border); border-radius: 24px; padding: 24px; transition: all .2s; cursor: pointer; display: flex; flex-direction: column; gap: 12px; }
+         .d-cat-item:hover { transform: translateY(-3px); box-shadow: var(--sh-2); border-color: var(--amber); }
+         .d-cat-name { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: var(--ink); line-height: 1.2; }
+         .d-cat-stats { display: flex; gap: 12px; }
+         .d-cat-pill { font-size: 10px; font-weight: 800; padding: 4px 10px; background: #f1f5f9; color: #64748b; border-radius: 6px; text-transform: uppercase; }
+
+         .d-sd-modal { background: #fff; border-radius: 28px; padding: 0; overflow: hidden; width: 100%; max-width: 520px; box-shadow: var(--sh-3); position: relative; }
+         .d-sd-head { background: linear-gradient(135deg, #b8651a, #d97706); padding: 40px 32px 32px; color: #fff; position: relative; }
+         .d-sd-head::before { content: ''; position: absolute; inset: 0; background: url('https://www.transparenttextures.com/patterns/cubes.png'); opacity: .1; }
+         .d-sd-close { position: absolute; top: 16px; right: 16px; width: 34px; height: 34px; border-radius: 10px; border: none; background: rgba(255,255,255,.15); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+         .d-sd-body { padding: 32px; }
+         .d-sd-title { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 8px; line-height: 1.1; }
+         .d-sd-cat { font-size: 12px; font-weight: 700; opacity: .8; text-transform: uppercase; letter-spacing: .06em; }
+         .d-sd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+         .d-sd-tile { background: #f7f9f6; padding: 16px; border-radius: 20px; border: 1px solid #edf2ec; }
+         .d-sd-label { font-size: 11px; font-weight: 800; color: #7a8c77; text-transform: uppercase; margin-bottom: 4px; }
+         .d-sd-val { font-family: 'Outfit', sans-serif; font-size: 19px; font-weight: 800; color: #1a2e14; }
+         .d-sd-desc { font-size: 14px; line-height: 1.6; color: #4a6844; margin-bottom: 24px; }
+         .d-sd-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 54px; background: #1a2e14; color: #fff; border-radius: 18px; border: none; font-size: 15px; font-weight: 800; cursor: pointer; transition: all .2s; }
+         .d-sd-btn:hover { background: #000; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,.15); }
         .d-cal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 14px; }
         .d-cal-card { border-radius: var(--r-lg); border: 1px solid var(--border); padding: 18px; background: var(--surface-2); border-top: 3px solid var(--acc,var(--green)); }
         .d-cal-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
-        .d-cal-season { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: var(--ink); }
+        .d-cal-season { font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 700; color: var(--ink); }
         .d-cal-period { font-size: 11px; color: var(--ink-3); font-weight: 500; }
         .d-cal-crops { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
         .d-cal-pill { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 100px; color: var(--acc,var(--green)); background: rgba(46,125,79,.07); border: 1px solid rgba(46,125,79,.14); }
@@ -1150,13 +1169,13 @@ const Dashboard = () => {
         @media(max-width:480px) { .d-wx-hero { grid-template-columns: 1fr; } }
         .d-wx-main { background: linear-gradient(145deg, #1e4a30, var(--green-2)); border-radius: var(--r-lg); padding: 24px 20px; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; min-height: 180px; }
         .d-wx-main-icon { color: rgba(255,255,255,.7); margin-bottom: 4px; }
-        .d-wx-temp { font-family: 'Playfair Display', serif; font-size: 54px; font-weight: 700; color: #fff; line-height: 1; }
+        .d-wx-temp { font-family: 'Outfit', sans-serif; font-size: 54px; font-weight: 700; color: #fff; line-height: 1; }
         .d-wx-cond { font-size: 13px; color: rgba(255,255,255,.72); font-weight: 600; }
         .d-wx-loc { font-size: 11px; color: rgba(255,255,255,.45); display: flex; align-items: center; gap: 4px; margin-top: 2px; }
         .d-wx-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .d-wx-tile { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px 12px; }
         .d-wx-tile-icon { color: var(--ink-3); margin-bottom: 6px; }
-        .d-wx-tile-val { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: var(--ink); }
+        .d-wx-tile-val { font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 700; color: var(--ink); }
         .d-wx-tile-label { font-size: 10px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; font-weight: 700; }
         .d-wx-forecast { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 18px 20px; }
         .d-wx-fc-label { font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .08em; font-weight: 700; margin-bottom: 16px; }
@@ -1164,7 +1183,7 @@ const Dashboard = () => {
         .d-wx-fc-day { display: flex; flex-direction: column; align-items: center; gap: 8px; }
         .d-wx-fc-name { font-size: 12px; font-weight: 700; color: var(--ink-3); }
         .d-wx-fc-icon { color: var(--ink-3); }
-        .d-wx-fc-temp { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 700; color: var(--ink); }
+        .d-wx-fc-temp { font-family: 'Outfit', sans-serif; font-size: 19px; font-weight: 700; color: var(--ink); }
 
         /* ── CHAT PANEL ── */
         .d-chat-panel { position: fixed; top: 0; right: 0; width: 400px; height: 100dvh; background: var(--surface); border-left: 1px solid var(--border); z-index: 800; display: flex; flex-direction: column; box-shadow: var(--sh-4); }
@@ -1172,7 +1191,7 @@ const Dashboard = () => {
         .d-chat-bar { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: linear-gradient(135deg, #152b1e, #1e4a30); border-bottom: 1px solid rgba(255,255,255,.06); }
         .d-chat-bar-l { display: flex; align-items: center; gap: 12px; }
         .d-chat-av { width: 38px; height: 38px; border-radius: var(--r-sm); background: rgba(255,255,255,.1); display: flex; align-items: center; justify-content: center; color: #a0e0bc; }
-        .d-chat-name { font-family: 'Playfair Display', serif; font-size: 16px; color: #fff; }
+        .d-chat-name { font-family: 'Outfit', sans-serif; font-size: 16px; color: #fff; }
         .d-chat-ready { font-size: 11px; color: rgba(255,255,255,.45); display: flex; align-items: center; gap: 6px; margin-top: 2px; }
         .d-chat-rdot { width: 6px; height: 6px; border-radius: 50%; background: #7dd9a3; }
         .d-btn-cx { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); border-radius: var(--r-sm); cursor: pointer; color: rgba(255,255,255,.55); padding: 7px; display: flex; }
@@ -1246,11 +1265,11 @@ const Dashboard = () => {
                   <p className="d-tile-value">{dashWeather ? `${Math.round(dashWeather.main.temp)}°C` : '—°C'}</p>
                   <p className="d-tile-sub">{dashWeather ? `${dashWeather.weather[0].description} · ${dashWeather.main.humidity}%` : 'Loading...'}</p>
                </div>
-               <div className="d-tile" style={{ '--tc': 'var(--green)', '--tb': 'var(--green-bg)' }} onClick={() => setCalendarOpen(true)}>
-                  <div className="d-tile-icon"><Calendar size={17} /></div>
-                  <p className="d-tile-label">{t('dash.season')}</p>
-                  <p className="d-tile-value">Rabi</p>
-                  <p className="d-tile-sub">{t('dash.plantingGuide')}</p>
+               <div className="d-tile" style={{ '--tc': 'var(--green)', '--tb': 'var(--green-bg)' }} onClick={() => navigate('/crop-picker')}>
+                  <div className="d-tile-icon"><Sprout size={17} /></div>
+                  <p className="d-tile-label">{t('nav.cropPicker')}</p>
+                  <p className="d-tile-value">Smart Pick</p>
+                  <p className="d-tile-sub">AI Fasal Recommendation</p>
                </div>
                <div id="mandi-section" className="d-tile" style={{ '--tc': 'var(--amber)', '--tb': 'var(--amber-bg)' }} onClick={() => setMarketOpen(true)}>
                   <div className="d-tile-icon"><TrendingUp size={17} /></div>
@@ -1283,24 +1302,24 @@ const Dashboard = () => {
                   ) : (
                      <div className="d-crop-list">
                         {crops.slice(0, 7).map(crop => (
-                              <div key={crop.id} className="d-crop-row" onClick={() => navigate('/inventory')}>
-                                 <div className="d-crop-l">
-                                    <div className="d-crop-ico">
-                                       {crop.imageUrl ? <img src={crop.imageUrl} alt={crop.name} /> : <Leaf size={22} />}
-                                    </div>
-                                    <div>
-                                       <p className="d-crop-name">{crop.name}</p>
-                                       <div className="d-crop-meta">
-                                          STATUS: <span>{crop.status}</span>
-                                       </div>
-                                    </div>
+                           <div key={crop.id} className="d-crop-row" onClick={() => navigate('/inventory')}>
+                              <div className="d-crop-l">
+                                 <div className="d-crop-ico">
+                                    {crop.imageUrl ? <img src={crop.imageUrl} alt={crop.name} /> : <Leaf size={22} />}
                                  </div>
-                                 <div className="d-crop-r">
-                                    <p className="d-crop-health-label">HEALTH SCORE</p>
-                                    <p className="d-crop-score">{crop.healthScore}%</p>
+                                 <div>
+                                    <p className="d-crop-name">{crop.name}</p>
+                                    <div className="d-crop-meta">
+                                       STATUS: <span>{crop.status}</span>
+                                    </div>
                                  </div>
                               </div>
-                           )
+                              <div className="d-crop-r">
+                                 <p className="d-crop-health-label">HEALTH SCORE</p>
+                                 <p className="d-crop-score">{crop.healthScore}%</p>
+                              </div>
+                           </div>
+                        )
                         )}
                      </div>
                   )}
@@ -1317,11 +1336,7 @@ const Dashboard = () => {
                      </div>
                      <ChevronRight size={14} className="d-aarr" />
                   </button>
-                  <button className="d-acard" onClick={() => setCalendarOpen(true)}>
-                     <div className="d-aico d-aico--g"><Calendar size={16} /></div>
-                     <div><p className="d-aname">{t('dash.cropCalendar')}</p><p className="d-asub">{t('dash.plantingGuide')}</p></div>
-                     <ChevronRight size={14} className="d-aarr" />
-                  </button>
+
                   <button id="live-market-action" className="d-acard" onClick={() => setMarketOpen(true)}>
                      <div className="d-aico d-aico--a"><TrendingUp size={16} /></div>
                      <div><p className="d-aname">{t('dash.mandiPrices')}</p><p className="d-asub">{t('dash.searchMarket')}</p></div>
@@ -1466,8 +1481,6 @@ const Dashboard = () => {
          </AnimatePresence>
 
          {/* Modals */}
-         {marketOpen && <MarketModal onClose={() => setMarketOpen(false)} />}
-         {calendarOpen && <CalendarModal onClose={() => setCalendarOpen(false)} />}
          {weatherOpen && <WeatherModal onClose={() => setWeatherOpen(false)} />}
 
 

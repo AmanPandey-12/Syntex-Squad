@@ -23,5 +23,8 @@ npm-debug.log*
 
 # Build output
 dist/
+<<<<<<< HEAD
+=======
 
 kaggle.json.txt
+>>>>>>> 85dc360d9356f0c975e818f90906c125ddedccf7

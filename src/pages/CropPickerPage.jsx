@@ -267,55 +267,55 @@ Respond ONLY in this exact JSON format, no extra text:
             ) : (
               <div className="space-y-3">
                 {history.map((item) => {
-                   const cropToDisplay = item.selectedCrop || (item.results ? item.results[0] : null);
-                   const match = cropToDisplay?.matchScore || 0;
-                   return (
-                     <div key={item.id}
-                       className="group relative flex items-center justify-between gap-4 p-4 rounded-2xl transition-all hover:bg-white hover:shadow-md"
-                       style={{ background: '#f7f9f6', border: '1px solid #e2e8df' }}
-                     >
-                       <div className="flex items-center gap-4">
-                         <div className="w-12 h-12 rounded-xl bg-white border border-[#e2e8df] flex items-center justify-center text-[#2e7d4f] shadow-sm">
-                           <Sprout size={22} />
-                         </div>
-                         <div>
-                           <div className="flex items-center gap-2">
-                             <p className="font-black text-sm text-[#1a2117]">{cropToDisplay?.name || item.topCrop}</p>
-                             {cropToDisplay?.hindiName && (
-                               <span className="text-[10px] text-[#7a8c77] border-l border-[#e2e8df] pl-2">{cropToDisplay.hindiName}</span>
-                             )}
-                           </div>
-                           <p className="text-[10px] uppercase font-bold tracking-wider text-[#7a8c77] mt-1 space-x-2">
-                             <span>{item.inputs.state}</span>
-                             <span>•</span>
-                             <span>{item.inputs.soilColor} {item.inputs.soilType} Soil</span>
-                             <span>•</span>
-                             <span className="text-[#2e7d4f]">{item.inputs.season}</span>
-                           </p>
-                           <p className="text-[9px] text-[#b0bcad] mt-1 italic">
-                             {new Date(item.savedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} at {new Date(item.savedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
-                           </p>
-                         </div>
-                       </div>
-                       <div className="flex items-center gap-4">
-                         <div className="text-right">
-                           <div className="text-xl font-black text-[#2e7d4f] leading-none mb-1">{match}%</div>
-                           <div className="text-[8px] uppercase font-black text-[#b0bcad] tracking-widest">Match Score</div>
-                         </div>
-                         <button
-                           onClick={() => {
-                             if (window.confirm('Delete this history item?')) {
-                               deleteDoc(doc(db, 'calculations', item.id)).then(loadHistory);
-                             }
-                           }}
-                           className="w-8 h-8 rounded-lg flex items-center justify-center text-[#c0392b] hover:bg-[#c0392b]/10 transition-colors"
-                         >
-                           <Trash2 size={16} />
-                         </button>
-                       </div>
-                     </div>
-                   );
-                 })}
+                  const cropToDisplay = item.selectedCrop || (item.results ? item.results[0] : null);
+                  const match = cropToDisplay?.matchScore || 0;
+                  return (
+                    <div key={item.id}
+                      className="group relative flex items-center justify-between gap-4 p-4 rounded-2xl transition-all hover:bg-white hover:shadow-md"
+                      style={{ background: '#f7f9f6', border: '1px solid #e2e8df' }}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-white border border-[#e2e8df] flex items-center justify-center text-[#2e7d4f] shadow-sm">
+                          <Sprout size={22} />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="font-black text-sm text-[#1a2117]">{cropToDisplay?.name || item.topCrop}</p>
+                            {cropToDisplay?.hindiName && (
+                              <span className="text-[10px] text-[#7a8c77] border-l border-[#e2e8df] pl-2">{cropToDisplay.hindiName}</span>
+                            )}
+                          </div>
+                          <p className="text-[10px] uppercase font-bold tracking-wider text-[#7a8c77] mt-1 space-x-2">
+                            <span>{item.inputs.state}</span>
+                            <span>•</span>
+                            <span>{item.inputs.soilColor} {item.inputs.soilType} Soil</span>
+                            <span>•</span>
+                            <span className="text-[#2e7d4f]">{item.inputs.season}</span>
+                          </p>
+                          <p className="text-[9px] text-[#b0bcad] mt-1 italic">
+                            {new Date(item.savedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} at {new Date(item.savedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <div className="text-xl font-black text-[#2e7d4f] leading-none mb-1">{match}%</div>
+                          <div className="text-[8px] uppercase font-black text-[#b0bcad] tracking-widest">Match Score</div>
+                        </div>
+                        <button
+                          onClick={() => {
+                            if (window.confirm('Delete this history item?')) {
+                              deleteDoc(doc(db, 'calculations', item.id)).then(loadHistory);
+                            }
+                          }}
+                          className="w-8 h-8 rounded-lg flex items-center justify-center text-[#c0392b] hover:bg-[#c0392b]/10 transition-colors"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -521,14 +521,14 @@ Respond ONLY in this exact JSON format, no extra text:
               <h2 className="text-2xl font-bold" style={{ fontFamily: 'Playfair Display, serif', color: '#1a2117' }}>
                 AI ki Recommendation
               </h2>
-               <div className="flex items-center justify-between mt-1">
-                 <p className="text-sm text-[#7a8c77]">Aapki khet ke liye top 5 fasalein</p>
-                 {estimatedPH && (
-                   <span className="text-[10px] uppercase tracking-widest font-black px-2 py-0.5 rounded bg-krishi-100 text-krishi-700 border border-krishi-200">
-                     Est. pH: {estimatedPH}
-                   </span>
-                 )}
-               </div>
+              <div className="flex items-center justify-between mt-1">
+                <p className="text-sm text-[#7a8c77]">Aapki khet ke liye top 5 fasalein</p>
+                {estimatedPH && (
+                  <span className="text-[10px] uppercase tracking-widest font-black px-2 py-0.5 rounded bg-krishi-100 text-krishi-700 border border-krishi-200">
+                    Est. pH: {estimatedPH}
+                  </span>
+                )}
+              </div>
 
               <div className="mt-4 space-y-4">
                 {results.map((crop, idx) => {
@@ -547,83 +547,83 @@ Respond ONLY in this exact JSON format, no extra text:
                       transition={{ duration: 0.3, delay: idx * 0.08 }}
                     >
                       <div className="rounded-2xl border border-[#e2e8df] bg-white p-5 shadow-sm transition-all hover:shadow-md">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <div style={{ width: 32, height: 32, borderRadius: 999, background: '#2e7d4f', color: '#fff', fontWeight: 700, display: 'grid', placeItems: 'center' }}>{idx + 1}</div>
+                        <div className="flex items-start justify-between gap-4">
                           <div>
-                            <p className="text-lg font-bold" style={{ fontFamily: 'Playfair Display, serif' }}>{crop.name}</p>
-                            <p className="text-sm text-[#3a4a37]">{crop.hindiName}</p>
+                            <div className="flex items-center gap-2">
+                              <div style={{ width: 32, height: 32, borderRadius: 999, background: '#2e7d4f', color: '#fff', fontWeight: 700, display: 'grid', placeItems: 'center' }}>{idx + 1}</div>
+                              <div>
+                                <p className="text-lg font-bold" style={{ fontFamily: 'Playfair Display, serif' }}>{crop.name}</p>
+                                <p className="text-sm text-[#3a4a37]">{crop.hindiName}</p>
+                              </div>
+                            </div>
                           </div>
+                          <span className="text-sm font-bold px-3 py-1 rounded-full" style={scoreStyle}>{match}% Match</span>
+                        </div>
+                        <p className="mt-3 italic text-[#475569]">{crop.whyGood}</p>
+
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          <span className="flex items-center gap-1 bg-[#f7f9f6] border border-[#e2e8df] rounded-full px-3 py-1 text-xs font-semibold text-[#3a4a37]"><Leaf size={12} /> {crop.expectedYield}</span>
+                          <span className="flex items-center gap-1 bg-[#f7f9f6] border border-[#e2e8df] rounded-full px-3 py-1 text-xs font-semibold text-[#3a4a37]"><Droplets size={12} /> {crop.waterNeed}</span>
+                          <span className="flex items-center gap-1 bg-[#f7f9f6] border border-[#e2e8df] rounded-full px-3 py-1 text-xs font-semibold text-[#3a4a37]"><Sun size={12} /> {crop.growthDays}</span>
+                          <span className="flex items-center gap-1 bg-[#f7f9f6] border border-[#e2e8df] rounded-full px-3 py-1 text-xs font-semibold text-[#3a4a37]"><TrendingUp size={12} /> {crop.estimatedProfit}</span>
+                        </div>
+
+                        <div className="mt-3 bg-[#eaf4ee] border border-[#c8e6d0] rounded-xl px-4 py-3 text-sm text-[#2e7d4f] font-medium flex items-center justify-between gap-4">
+                          <span>💡 {crop.tips}</span>
+                          <button
+                            onClick={() => handleSave(crop)}
+                            disabled={saving || saved}
+                            className="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all"
+                            style={{
+                              background: '#2e7d4f',
+                              color: '#fff',
+                              opacity: saving ? 0.5 : 1
+                            }}
+                          >
+                            Choose Fasal
+                          </button>
                         </div>
                       </div>
-                      <span className="text-sm font-bold px-3 py-1 rounded-full" style={scoreStyle}>{match}% Match</span>
-                    </div>
-                    <p className="mt-3 italic text-[#475569]">{crop.whyGood}</p>
+                    </motion.div>
+                  );
+                })}
+              </div>
 
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <span className="flex items-center gap-1 bg-[#f7f9f6] border border-[#e2e8df] rounded-full px-3 py-1 text-xs font-semibold text-[#3a4a37]"><Leaf size={12} /> {crop.expectedYield}</span>
-                      <span className="flex items-center gap-1 bg-[#f7f9f6] border border-[#e2e8df] rounded-full px-3 py-1 text-xs font-semibold text-[#3a4a37]"><Droplets size={12} /> {crop.waterNeed}</span>
-                      <span className="flex items-center gap-1 bg-[#f7f9f6] border border-[#e2e8df] rounded-full px-3 py-1 text-xs font-semibold text-[#3a4a37]"><Sun size={12} /> {crop.growthDays}</span>
-                      <span className="flex items-center gap-1 bg-[#f7f9f6] border border-[#e2e8df] rounded-full px-3 py-1 text-xs font-semibold text-[#3a4a37]"><TrendingUp size={12} /> {crop.estimatedProfit}</span>
-                    </div>
+              <div className="flex gap-3 flex-wrap mt-4">
+                <button
+                  onClick={() => handleSave()}
+                  disabled={saving || saved}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all"
+                  style={{
+                    background: saved ? '#eaf4ee' : '#2e7d4f',
+                    color: saved ? '#2e7d4f' : '#fff',
+                    border: saved ? '1px solid #a8d4b5' : 'none',
+                    cursor: saving ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  {saving ? (
+                    <><RefreshCw size={15} className="animate-spin" /> Saving...</>
+                  ) : saved ? (
+                    <><CheckCircle2 size={15} /> Saved!</>
+                  ) : (
+                    <><Save size={15} /> Save All Results</>
+                  )}
+                </button>
+                <button
+                  onClick={handleDownload}
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all"
+                  style={{ background: '#f7f9f6', color: '#1a2117', border: '1px solid #e2e8df', cursor: 'pointer' }}
+                >
+                  <Download size={15} /> Download Report
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-                    <div className="mt-3 bg-[#eaf4ee] border border-[#c8e6d0] rounded-xl px-4 py-3 text-sm text-[#2e7d4f] font-medium flex items-center justify-between gap-4">
-                       <span>💡 {crop.tips}</span>
-                       <button 
-                         onClick={() => handleSave(crop)}
-                         disabled={saving || saved}
-                         className="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all"
-                         style={{
-                           background: '#2e7d4f',
-                           color: '#fff',
-                           opacity: saving ? 0.5 : 1
-                         }}
-                       >
-                         Choose Fasal
-                       </button>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          <div className="flex gap-3 flex-wrap mt-4">
-            <button
-              onClick={() => handleSave()}
-              disabled={saving || saved}
-              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all"
-              style={{
-                background: saved ? '#eaf4ee' : '#2e7d4f',
-                color: saved ? '#2e7d4f' : '#fff',
-                border: saved ? '1px solid #a8d4b5' : 'none',
-                cursor: saving ? 'not-allowed' : 'pointer'
-              }}
-            >
-              {saving ? (
-                <><RefreshCw size={15} className="animate-spin" /> Saving...</>
-              ) : saved ? (
-                <><CheckCircle2 size={15} /> Saved!</>
-              ) : (
-                <><Save size={15} /> Save All Results</>
-              )}
-            </button>
-            <button
-              onClick={handleDownload}
-              className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all"
-              style={{ background: '#f7f9f6', color: '#1a2117', border: '1px solid #e2e8df', cursor: 'pointer' }}
-            >
-              <Download size={15} /> Download Report
-            </button>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-
-      <AppFooter />
+        <AppFooter />
+      </div>
     </div>
-  </div>
   );
 };
 

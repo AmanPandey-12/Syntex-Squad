@@ -14,7 +14,6 @@ import AppFooter from '../components/AppFooter';
 
 import { useLanguage } from '../context/LanguageContext';
 
-
 const ProfitCalculatorPage = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();

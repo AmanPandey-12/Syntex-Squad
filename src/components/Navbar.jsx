@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Leaf, LayoutDashboard, PackageSearch,
   User, Menu, X, ArrowRight, LogOut, Scan, ChevronRight,
-  Bell, Bot
+  Bell, Bot, Award
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
@@ -79,6 +79,7 @@ const Navbar = ({ dark = false }) => {
   const navLinks = [
     { name: t('nav.dashboard'), path: '/dashboard', Icon: LayoutDashboard },
     { name: t('nav.inventory'), path: '/inventory', Icon: PackageSearch },
+    { name: t('nav.schemes'), path: '/schemes', Icon: Award },
   ];
 
   const handleLogout = async () => {
@@ -181,6 +182,7 @@ const Navbar = ({ dark = false }) => {
           align-items: center;
           gap: 10px;
         }
+        .nb-right-mobile { display: none; }
         .nav-icon-btn {
           width: 38px; height: 38px; border-radius: 50%;
           border: 1px solid ${dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.06)'};
@@ -290,8 +292,10 @@ const Navbar = ({ dark = false }) => {
         .nb-scan-fab:active { transform: scale(0.9); }
 
         @media(max-width: 720px) {
-          .navbar-center, .btn-scan-nav, .nav-icon-btn[title="Notifications"], .nav-avatar, .nav-icon-btn[title="Sign out"] { display: none !important; }
+          .navbar-center, .btn-scan-nav, .nav-icon-btn[title="Notifications"], .nav-icon-btn[title="Sign out"], .nb-right-desktop { display: none !important; }
           .nb-bottom { display: block; }
+          .nb-right-mobile { display: flex !important; align-items: center; }
+          .nav-avatar { display: flex !important; width: 34px; height: 34px; border-width: 1.5px; }
           body { padding-bottom: 72px; }
         }
 
@@ -403,13 +407,17 @@ const Navbar = ({ dark = false }) => {
             {user ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 {/* Desktop Icons (Hidden on Mobile via CSS) */}
-                <div className="navbar-right" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div className="nb-right-desktop" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <div
                     className="nav-avatar"
                     title={firstName}
                     onClick={() => navigate('/profile')}
                   >
-                    {firstName.charAt(0).toUpperCase()}
+                    {userProfile?.photoURL ? (
+                      <img src={userProfile.photoURL} alt="" style={{ width: '100%', height: '100%', borderRadius: 'inherit', objectFit: 'cover' }} />
+                    ) : (
+                      firstName.charAt(0).toUpperCase()
+                    )}
                   </div>
 
                   <button
@@ -439,13 +447,22 @@ const Navbar = ({ dark = false }) => {
               </Link>
             )}
 
-            {/* Mobile Toggle */}
-            <button className="nav-icon-btn" style={{ display: 'none' }} id="nb-toggle" onClick={() => setOpen(true)}>
-              <Menu size={20} />
-            </button>
-            <style>{`
-              @media(max-width: 720px) { #nb-toggle { display: flex !important; } }
-            `}</style>
+            {/* Mobile Profile Section (Replaces Menu Toggle) */}
+            <div className="nb-right-mobile">
+              {user && (
+                <div 
+                  className="nav-avatar" 
+                  onClick={() => navigate('/profile')}
+                  style={{ margin: 0, boxShadow: 'none' }}
+                >
+                  {userProfile?.photoURL ? (
+                    <img src={userProfile.photoURL} alt="" style={{ width: '100%', height: '100%', borderRadius: 'inherit', objectFit: 'cover' }} />
+                  ) : (
+                    firstName.charAt(0).toUpperCase()
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </motion.div>
@@ -476,13 +493,13 @@ const Navbar = ({ dark = false }) => {
                 </button>
               </div>
 
-              <button className={`nb-b-item ${location.search === '?chat=true' ? 'nb-b-item--active' : ''}`} onClick={() => navigate('/dashboard?chat=true')}>
+               <button className={`nb-b-item ${location.search === '?chat=true' ? 'nb-b-item--active' : ''}`} onClick={() => navigate('/dashboard?chat=true')}>
                 <Bot size={22} strokeWidth={2} />
                 <span>Chat</span>
               </button>
-              <Link to="/profile" className={`nb-b-item ${location.pathname === '/profile' ? 'nb-b-item--active' : ''}`}>
-                <User size={22} strokeWidth={2} />
-                <span>{t('nav.profile')}</span>
+              <Link to="/schemes" className={`nb-b-item ${location.pathname === '/schemes' ? 'nb-b-item--active' : ''}`}>
+                <Award size={22} strokeWidth={2} />
+                <span>Schemes</span>
               </Link>
             </div>
           </motion.nav>
@@ -509,7 +526,7 @@ const Navbar = ({ dark = false }) => {
             transition={{ type: 'spring', damping: 28, stiffness: 220 }}
           >
             <div className="nb-drawer-head">
-            <div className="navbar-brand">
+              <div className="navbar-brand">
                 <div className="brand-icon" style={{ width: 44, height: 44, borderRadius: 14 }}><img src="/logo.png" className="brand-logo-img" alt="logo" /></div>
                 <span className="brand-name" style={{ fontSize: 22 }}>Krishi<span>AI</span></span>
               </div>

@@ -4,7 +4,6 @@ import { Github, Linkedin, Globe, Mail } from 'lucide-react';
 const AppFooter = () => {
     const year = new Date().getFullYear();
     
-
     return (
         <footer className="bg-white border-t border-gray-100 py-6 px-6 mt-auto">
             <div className="max-w-1100 mx-auto">
