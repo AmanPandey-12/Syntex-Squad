@@ -23,6 +23,7 @@ import { mockApi } from '../services/api';
 import AppFooter from '../components/AppFooter';
 
 import { useLanguage, translations } from '../context/LanguageContext';
+import { generateHTMLReport } from '../utils/reportGenerator';
 
 /* ─────────────────────────────────────────────────────────────
    HELPERS
@@ -48,166 +49,13 @@ const Badge = ({ ok, t }) => (
 /* ─────────────────────────────────────────────────────────────
    PDF GENERATOR
 ───────────────────────────────────────────────────────────── */
-const generatePDF = (crop, newScore, comparison, newStatus, scanDate, t, language) => {
-   const diff = newScore - (crop.healthScore || 0);
-   const arrow = diff > 0 ? '▲' : diff < 0 ? '▼' : '—';
-   const color = diff > 0 ? '#15803d' : diff < 0 ? '#b91c1c' : '#475569';
-   const now = new Date(scanDate);
-   const full = crop.lastScanFull;
-   const content = full?.[language] || full?.en || {};
-   const en = full?.en || {}; // fallback
-
-   const stepRows = (steps = [], label) => steps.length ? `
-    <p class="section-label">${label}</p>
-    ${steps.slice(0, 3).map(s => `
-      <div class="step-row">
-        <div class="step-num">${s.step}</div>
-        <div class="step-body">
-          <p class="step-title">${s.title}</p>
-          <p class="step-detail">${s.detail}</p>
-        </div>
-      </div>`).join('')}` : '';
-
-   const title = t ? t('inv.healthCert') || 'Plant Health Certificate' : 'Plant Health Certificate';
-   const subtitle = t ? t('inv.officialReport') || 'Official KrishiAI Biological Report' : 'Official KrishiAI Biological Report';
-   const cropIdLabel = t ? t('inv.cropId') || 'Crop Identification' : 'Crop Identification';
-   const healthScoreLabel = t ? t('inv.health') : 'Health Score';
-   const vitalityIndexLabel = t ? t('inv.vitalityIndex') || 'Vitality Index' : 'Vitality Index';
-   const severityLabel = t ? (t('common.low').replace(/./, c => c.toUpperCase()) === t('common.low') ? 'Severity' : t('inv.severity') || 'Severity') : 'Severity';
-   const protocolLabel = t ? t('inv.medicalProtocol') || 'Medical & Nutritional Protocol' : 'Medical & Nutritional Protocol';
-   const fertLabel = t ? t('det.nutrientProtocol') : 'Recommended Fertilizer';
-   const pestLabel = t ? t('det.protectionProtocol') : 'Protection Medicine';
-
-   const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"/>
-<title>${title} - ${crop.name}</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&family=Mrs+Saint+Delafield&display=swap');
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',sans-serif;background:#f8fafc;color:#0f172a;padding:40px}
-.certificate{max-width:800px;margin:10px auto;background:#fff;border:12px double #e2e8f0;padding:30px 40px;position:relative;box-shadow:0 30px 60px -12px rgba(0,0,0,0.1)}
-.watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-45deg);font-size:140px;font-weight:900;color:rgba(21,128,61,0.03);z-index:0;white-space:nowrap;pointer-events:none;font-family:'Instrument Serif',serif}
-.header-box{border-bottom:2px solid #0f172a;padding-bottom:15px;margin-bottom:25px;text-align:center;position:relative;z-index:1}
-.cert-title{font-family:'Instrument Serif',serif;font-size:44px;letter-spacing:-0.02em;color:#15803d;margin-bottom:4px;text-transform:uppercase}
-.cert-subtitle{font-size:11px;font-weight:800;letter-spacing:0.4em;color:#64748b;text-transform:uppercase}
-.main-content{position:relative;z-index:1}
-.meta-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;margin-bottom:25px}
-.crop-info-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:20px;display:flex;gap:16px;align-items:center}
-.crop-photo{width:90px;height:90px;border-radius:12px;object-fit:cover;border:2px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,0.1);background:#e2e8f0}
-.label{font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:0.2em;color:#94a3b8;margin-bottom:4px;display:block}
-.value{font-size:24px;font-weight:800;color:#0f172a;font-family:'Instrument Serif',serif}
-.diagnosis-badge{background:#1e293b;color:#fff;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:800;text-transform:uppercase;display:inline-block;margin-top:6px}
-.metrics-box{display:grid;grid-template-columns:1fr;gap:10px}
-.metric-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#fff;border:1px solid #e2e8f0;border-radius:12px}
-.metric-name{font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase}
-.metric-val{font-size:17px;font-weight:800;color:#15803d}
-.section-label{font-size:9px;font-weight:900;color:#15803d;letter-spacing:0.15em;text-transform:uppercase;margin:20px 0 8px;border-left:3px solid #15803d;padding-left:10px}
-.summary-box{font-size:13px;line-height:1.5;color:#334155;background:#f0fdf4;border:1px solid #dcfce7;padding:14px;border-radius:10px;font-style:italic}
-
-/* RED STAMP DESIGN */
-.krishi-stamp{position:absolute;bottom:100px;right:60px;width:150px;height:150px;display:flex;align-items:center;justify-content:center;transform:rotate(-15deg);opacity:0.7;pointer-events:none;z-index:2}
-.stamp-outer{position:absolute;width:100%;height:100%;border:4px double #b91c1c;border-radius:50%}
-.stamp-inner-circle{position:absolute;width:80%;height:80%;border:2px solid #b91c1c;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#b91c1c;font-family:'Instrument Serif',serif}
-.stamp-text{font-size:24px;font-weight:900;letter-spacing:1px;border-top:1px solid #b91c1c;border-bottom:1px solid #b91c1c;padding:2px 8px;margin:2px 0}
-.stamp-status{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:2px}
-
-.medicine-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.med-card{padding:12px;border-radius:10px;border:1px solid #e2e8f0}
-.med-card--fert{background:#f0f9ff;border-color:#e0f2fe}
-.med-card--pest{background:#fff1f2;border-color:#ffe4e6}
-.med-title{font-size:9px;font-weight:800;text-transform:uppercase;margin-bottom:2px}
-.med-val{font-size:12px;font-weight:700;color:#1e293b}
-.step-row{display:flex;gap:10px;margin-bottom:6px;padding:6px 8px;border-bottom:1px solid #f1f5f9}
-.step-num{width:18px;height:18px;background:#15803d;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;flex-shrink:0}
-.step-title{font-size:11px;font-weight:800;color:#0f172a}
-.step-detail{font-size:10px;color:#64748b;margin-top:1px}
-.footer{margin-top:40px;padding-top:15px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:flex-end}
-.footer-text{font-size:9px;color:#94a3b8;font-weight:600}
-.signature{text-align:center;position:relative;padding-bottom:10px}
-.sig-name{font-family:'Mrs Saint Delafield', cursive;font-size:52px;color:#1e293b;margin-bottom:-22px;transform:rotate(-4deg);opacity:0.9}
-.sig-line{width:200px;border-top:1px solid #1e293b;margin-bottom:4px}
-.sig-label{font-size:10px;font-weight:800;color:#1e293b;text-transform:uppercase}
-.print-btn{position:fixed;top:20px;right:20px;padding:12px 24px;background:#15803d;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;box-shadow:0 10px 20px rgba(0,0,0,0.1);z-index:100;transition:all 0.2s}
-.print-btn:hover{background:#16a34a;transform:translateY(-2px)}
-
-@page { size: A4; margin: 10mm; }
-@media print {
-  body{padding:0;background:#fff; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;}
-  .certificate{box-shadow:none;margin:0 auto;border-color:#ccc; transform: scale(0.98); transform-origin: top center;}
-  .print-btn{display:none}
-}
-</style></head><body>
-<button class="print-btn" onclick="window.print()">Print Report</button>
-<div class="certificate">
-  <div class="watermark">KrishiAI</div>
-  <div class="header-box">
-    <h1 class="cert-title">${title}</h1>
-    <p class="cert-subtitle">${subtitle}</p>
-  </div>
-  <div class="main-content">
-    <div class="meta-grid">
-      <div class="crop-info-card">
-        ${crop.imageUrl ? `<img src="${crop.imageUrl}" class="crop-photo" />` : `<div class="crop-photo" style="display:flex;align-items:center;justify-content:center;color:#94a3b8"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C10 14.5 10.5 13 10.5 13"/></svg></div>`}
-        <div>
-          <span class="label">${cropIdLabel}</span>
-          <div class="value">${content.cropName || crop.name}</div>
-          <div class="diagnosis-badge">${content.diagnosis || crop.diagnosis || 'Good'}</div>
-          <p style="font-size:9px; color:#64748b; margin-top:8px; font-weight:700">Scan ID: #${crop.id?.substring(0, 10).toUpperCase()}</p>
-        </div>
-      </div>
-      <div class="metrics-box">
-        <div class="metric-row"><span class="metric-name">${healthScoreLabel}</span><span class="metric-val" style="color:${color}">${newScore}%</span></div>
-        <div class="metric-row"><span class="metric-name">${vitalityIndexLabel}</span><span class="metric-val">${crop.confidence}%</span></div>
-        <div class="metric-row"><span class="metric-name">${severityLabel}</span><span class="metric-val" style="color:${color}">${crop.severity || 'N/A'}</span></div>
-      </div>
-    </div>
-
-    <p class="section-label">${protocolLabel}</p>
-    <div class="medicine-grid">
-       <div class="med-card med-card--fert">
-          <p class="med-title" style="color:#0369a1">${fertLabel}</p>
-          <p class="med-val">${content.fertilizer || 'N/A'}</p>
-       </div>
-       <div class="med-card med-card--pest">
-          <p class="med-title" style="color:#be123c">${pestLabel}</p>
-          <p class="med-val">${content.pesticide || 'None required'}</p>
-       </div>
-    </div>
-
-    <p class="section-label">${t ? t('inv.diagnosis') : 'Biological Observations'}</p>
-    <div class="summary-box">${(content.summary || crop.diagnosis || 'Optimal status maintained.').substring(0, 160)}${(content.summary || crop.diagnosis || '').length > 160 ? '...' : ''}</div>
-
-    ${content.solution?.length ? stepRows(content.solution, t ? t('inv.solutionSteps') : 'Treatment Solutions') : ''}
-    ${content.prevention?.length ? stepRows(content.prevention, t ? t('inv.preventionSteps') : 'Preventative Measures') : ''}
-
-    <div class="krishi-stamp">
-      <div class="stamp-outer"></div>
-      <div class="stamp-inner-circle">
-        <div style="font-size:9px; font-weight:800">CERTIFIED BY</div>
-        <div class="stamp-text">KrishiAI</div>
-        <div class="stamp-status">VALIDATED</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer">
-    <div class="footer-text">
-      KRISHIAI V4 STATION PRECISION REPORT<br/>
-      GENERATED: ${now.toLocaleString('en-IN')}
-    </div>
-    <div class="signature">
-      <div class="sig-name">KrishiAI</div>
-      <div class="sig-line"></div>
-      <p class="sig-label">Authorized Signature</p>
-      <p style="font-size:9px; color:#15803d; font-weight:800; padding:1px 4px; border:1px solid #15803d; border-radius:4px; margin-top:4px">OFFICIALLY VERIFIED</p>
-    </div>
-  </div>
-</div></body></html>`;
-
-   const blob = new Blob([html], { type: 'text/html' });
+const generatePDF = (crop, t, language, now = new Date()) => {
+   const reportHtml = generateHTMLReport(crop, t, now, language);
+   const blob = new Blob([reportHtml], { type: 'text/html' });
    const url = URL.createObjectURL(blob);
    const a = document.createElement('a');
    a.href = url;
-   a.download = `KrishiAI_${crop.name.replace(/\s+/g, '_')}_${now.toISOString().slice(0, 10)}.html`;
+   a.download = `KrishiAI_${(crop.name || 'Report').replace(/\s+/g, '_')}_${now.toISOString().slice(0, 10)}.html`;
    a.click();
    URL.revokeObjectURL(url);
 };
@@ -412,7 +260,7 @@ const DetailModal = ({ crop, onClose, onRescan, trendData }) => {
 
                      <div className="i-modal-actions">
                         <button className="i-btn-primary" onClick={() => { onRescan(crop); onClose(); }}><Scan size={15} /> {t('inv.reScan')}</button>
-                        <button className="i-btn-secondary" onClick={() => generatePDF(crop, crop.healthScore, 'Current result', crop.status, crop.lastScanned || new Date(), t, language)}><FileDown size={14} /> {t('inv.downloadReport') || 'PDF'}</button>
+                        <button className="i-btn-secondary" onClick={() => generatePDF(crop, t, language)}><FileDown size={14} /> {t('inv.downloadReport') || 'PDF'}</button>
                         <button className="i-btn-ghost" onClick={onClose}>{t('inv.close')}</button>
                      </div>
                   </div>
@@ -435,6 +283,7 @@ const RescanModal = ({ crop, onClose }) => {
    const [comparison, setComparison] = useState(null);
    const [saved, setSaved] = useState(false);
    const [step, setStep] = useState('upload');
+   const [error, setError] = useState(null);
    const [stageIdx, setStageIdx] = useState(0);
    const scanDate = useRef(new Date());
 
@@ -458,6 +307,7 @@ const RescanModal = ({ crop, onClose }) => {
       const f = e.target.files[0];
       if (!f) return;
       setSelectedFile(f);
+      setError(null);
       const r = new FileReader();
       r.onloadend = () => setPreview(r.result);
       r.readAsDataURL(f);
@@ -535,6 +385,23 @@ const RescanModal = ({ crop, onClose }) => {
          let res;
          try { res = await mockApi.predictDisease(b64); }
          catch { res = makeFallback(Math.min(100, Math.max(10, prevScore + Math.floor((Math.random() - 0.4) * 28)))); }
+         
+         if (res.isAgri === false) {
+            setScanning(false);
+            setError("Wrong image type. Please upload a crop photo.");
+            setStep('upload');
+            return;
+         }
+
+         const originalCrop = crop.name.toLowerCase();
+         const detectedCrop = res.cropName.toLowerCase();
+         if (!detectedCrop.includes(originalCrop) && !originalCrop.includes(detectedCrop)) {
+            setScanning(false);
+            setError(`Different crop detected (${res.cropName}). Expected ${crop.name}.`);
+            setStep('upload');
+            return;
+         }
+
          const newScore = res.healthScore;
          const diff = newScore - prevScore;
 
@@ -568,7 +435,7 @@ const RescanModal = ({ crop, onClose }) => {
 
    const downloadReport = () => {
       if (!result) return;
-      generatePDF({ ...crop, lastScanFull: result.full, scanHistory: [...history, { score: result.score, date: scanDate.current.toISOString(), status: result.status }] }, result.score, comparison.text, result.status, scanDate.current, t, language);
+      generatePDF({ ...crop, lastScanFull: result.full, healthScore: result.score, status: result.status, diagnosis: result.diagnosis }, t, language);
    };
 
    const contentLang = language;
@@ -601,8 +468,14 @@ const RescanModal = ({ crop, onClose }) => {
                         <>
                            <img src={preview} className="rs-upload-img" alt="preview" />
                            {scanning && (<><div className="rs-scan-bar" /><div className="rs-scan-overlay"><div className="rs-scan-label">{stages[stageIdx]}</div></div></>)}
-                           {!scanning && step !== 'result' && <button className="rs-clear" onClick={() => { setPreview(null); setResult(null); setStep('upload'); }}><RefreshCw size={15} /></button>}
+                           {!scanning && step !== 'result' && <button className="rs-clear" onClick={() => { setPreview(null); setResult(null); setError(null); setStep('upload'); }}><RefreshCw size={15} /></button>}
                         </>
+                     ) : error ? (
+                        <div style={{ textAlign: 'center', padding: '20px' }}>
+                           <AlertTriangle size={32} color="var(--rose)" />
+                           <p style={{ color: 'var(--rose)', fontWeight: 700, marginTop: '10px' }}>{error}</p>
+                           <button onClick={() => { setError(null); setSelectedFile(null); }} style={{ marginTop: '10px', padding: '8px 16px', background: '#f1f5f9', borderRadius: '8px' }}>Retry</button>
+                        </div>
                      ) : (
                         <label className="rs-upload-label">
                            <div className="rs-upload-ico"><Upload size={24} /></div>

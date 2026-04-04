@@ -6,14 +6,15 @@ import {
    PackageSearch, Menu, User, Users, PhoneOff, PhoneCall, Speaker, Calculator, Square,
    RefreshCw, Award, History, Save, Trash2
 } from 'lucide-react';
+
 import { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import { doc, getDoc, collection, onSnapshot, query, where, updateDoc, addDoc, deleteDoc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { motion, AnimatePresence } from 'framer-motion';
-import { mockApi } from '../services/api';
-import FarmerCommunity from '../components/FarmerCommunity';
+
+
 import AppFooter from '../components/AppFooter';
 import MicButton from '../components/MicButton';
 import FloatingMic from '../components/FloatingMic';
@@ -1626,32 +1627,14 @@ const Dashboard = () => {
          {communityOpen && (
             <Modal title={t('dash.community') || 'Community'} subtitle="Farmer Network" onClose={() => setCommunityOpen(false)}>
                <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                  <div style={{ 
-                     borderRadius: '24px', 
-                     overflow: 'hidden', 
-                     marginBottom: '24px',
-                     boxShadow: '0 12px 40px rgba(0,0,0,0.1)',
-                     border: '1px solid rgba(134, 239, 172, 0.4)',
-                     position: 'relative',
-                     background: '#050709',
-                     height: '240px',
-                     display: 'flex',
-                     alignItems: 'center',
-                     justifyContent: 'center'
-                  }}>
-                     {/* Immersive Background for Community */}
-                     <div style={{ position: 'absolute', inset: 0, opacity: 0.6 }}>
-                        <Features3D style={{ width: '100%', height: '100%' }} />
-                     </div>
-                     <img src="/community_coming_soon_1775315413770.png" alt="Community Coming Soon" 
-                        style={{ 
-                           width: '180px', 
-                           position: 'relative', 
-                           zIndex: 2,
-                           filter: 'drop-shadow(0 0 20px rgba(74, 222, 128, 0.3))'
-                        }} 
-                     />
-                  </div>
+                   <img src="/community_coming_soon_1775315413770.png" alt="Community Coming Soon" 
+                      style={{ 
+                         width: '280px', 
+                         margin: '0 auto 24px',
+                         display: 'block',
+                         filter: 'drop-shadow(0 4px 12px rgba(74, 222, 128, 0.15))'
+                      }} 
+                   />
                   <h3 style={{ fontSize: '24px', fontWeight: 800, color: 'var(--ink)', marginBottom: '10px' }}>Coming Soon</h3>
                   <p style={{ fontSize: '14px', color: 'var(--ink-3)', lineHeight: 1.6, maxWidth: '300px', margin: '0 auto 24px' }}>
                      We are building a powerful network for Indian farmers to connect, share knowledge, and grow together.

@@ -117,20 +117,10 @@ const ContactPage = () => {
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
       `}</style>
 
-      {/* Navigation */}
-      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, padding: '20px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(5,7,9,0.8)', backdropFilter: 'blur(10px)' }}>
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-           <div style={{ width: 32, height: 32, background: 'linear-gradient(135deg,#4ade80,#16a34a)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-             <Leaf size={16} color="#050709" />
-           </div>
-           <span style={{ fontSize: 18, fontWeight: 700, color: 'white' }}>KrishiAI</span>
-        </Link>
-        <button onClick={() => navigate(-1)} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)', padding: '8px 16px', borderRadius: 100, fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div className="grid-bg" style={{ position: 'relative', paddingTop: '20px', minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+        <button onClick={() => navigate(-1)} style={{ position: 'absolute', top: 20, left: 20, zIndex: 110, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)', padding: '8px 16px', borderRadius: 100, fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
           <ArrowLeft size={14} /> {t('common.back')}
         </button>
-      </nav>
-
-      <div className="grid-bg" style={{ position: 'relative', paddingTop: '40px', minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
         
         {/* Decorative Orbs */}
         <div style={{ position: 'absolute', top: '10%', left: '5%', width: '300px', height: '300px', background: 'rgba(74, 222, 128, 0.03)', borderRadius: '50%', filter: 'blur(80px)', animation: 'float 10s infinite' }} />

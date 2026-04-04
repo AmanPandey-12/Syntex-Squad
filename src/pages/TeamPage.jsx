@@ -83,7 +83,7 @@ const TeamPage = () => {
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: #06090a; font-family: 'Nunito', sans-serif; }
 
-        .team-page { min-height: 100vh; background: #06090a; padding-top: 20px; }
+        .team-page { min-height: 100vh; background: #06090a; padding-top: 5px; }
         .team-wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
 
         /* Back button */
@@ -152,8 +152,6 @@ const TeamPage = () => {
       `}</style>
 
       <div className="team-page">
-        <Navbar dark={true} />
-
         <div className="team-wrap">
 
           {/* Back button */}

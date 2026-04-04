@@ -70,6 +70,11 @@ export const mockApi = {
               - Language: Use EXTREMELY SIMPLE, village-style talk. NO SCIENTIFIC JARGON.
               - Summary: Precisely 1-2 VERY SHORT sentences. Focus on what is wrong and if it's serious.
               
+              VALIDATION RULE:
+              - IF the image is NOT related to agriculture, plants, leaves, or crops (e.g. person, bike, car, room, random object):
+                Set "is_agri": false and "diag": "Wrong image type".
+              - IF it IS a crop/plant: Set "is_agri": true.
+
               SCORING RULES:
               1. IF HEALTHY: 'diag' must be "Healthy", 'score' 95-100.
               2. IF DISEASED: accurately identify the issue and 'score' reflecting affected area:
@@ -77,6 +82,7 @@ export const mockApi = {
               
               JSON Structure:
               {
+                "is_agri": true,
                 "crop": "English Name",
                 "diag": "Common Disease Name",
                 "sev": "Low"|"Moderate"|"High"|"Critical",
@@ -129,6 +135,7 @@ export const mockApi = {
 
       // Flatten and map to expected structure
       const finalResult = {
+        isAgri: rawJson.is_agri === undefined ? true : rawJson.is_agri,
         cropName: rawJson.crop || rawJson.cropName || "Unknown",
         diagnosis: rawJson.diag || rawJson.diagnosis || "Healthy",
         severity: rawJson.sev || rawJson.severity || "Low",

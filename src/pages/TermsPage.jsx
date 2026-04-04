@@ -69,10 +69,8 @@ const TermsPage = () => {
 
   return (
     <div className="min-h-screen bg-[#06090a]">
-      <Navbar dark={true} />
-      
       {/* Back Button */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-10 sm:pt-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8">
         <button
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 sm:gap-3 text-gray-400 hover:text-white transition-all duration-200 text-xs sm:text-sm font-medium group"
@@ -85,7 +83,7 @@ const TermsPage = () => {
         </button>
       </div>
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-16 pb-20 px-6 md:px-16">
+      <section className="relative overflow-hidden pt-8 pb-20 px-6 md:px-16">
         <div className="max-w-4xl mx-auto text-center">
           <motion.h1 
             className="font-playfair text-5xl md:text-7xl font-bold text-white mb-6"

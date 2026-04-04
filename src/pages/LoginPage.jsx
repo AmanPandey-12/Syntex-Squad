@@ -121,7 +121,7 @@ const LoginPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="w-full max-w-md mt-16 lg:mt-0"
+          className="w-full max-w-md mt-6 lg:mt-0"
         >
           {/* Header */}
           <div className="mb-8">
